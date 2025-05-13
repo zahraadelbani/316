@@ -1,0 +1,15 @@
+# Virtual environment
+venv/
+__pycache__/
+*.pyc
+
+# SQLite DB
+*.sqlite3
+db.sqlite3
+
+# Environment variables
+.env
+
+# Static/media
+/static/
+/media/
