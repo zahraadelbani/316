@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>📤 Import BibTeX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+  <div class="max-w-3xl mx-auto px-4 py-10">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-2xl font-bold flex items-center gap-2">
+        <img src="https://cdn-icons-png.flaticon.com/512/3682/3682009.png" class="w-7 h-7" alt="icon">
+        Import BibTeX
+      </h1>
+      <a href="{% url 'article_list' %}" class="text-sm text-blue-600 hover:underline">
+        ← Back to Articles
+      </a>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white shadow rounded-lg p-6">
+      <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">BibTeX File (.bib)</label>
+          {{ form.bib_file }}
+        </div>
+        <button type="submit"
+          class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
+          Upload & Import
+        </button>
+      </form>
+    </div>
+
+    <!-- Optional Message -->
+    {% if messages %}
+      <div class="mt-6">
+        {% for message in messages %}
+          <div class="text-sm text-green-700 bg-green-100 border border-green-300 rounded p-3">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+  </div>
+
+</body>
+</html>
