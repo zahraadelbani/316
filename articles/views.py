@@ -44,6 +44,8 @@ def article_list(request):
 
 @login_required
 def import_bibtex(request):
+    if request.user.get_role() == "reviewer":
+        return HttpResponseForbidden("reViewers are not allowed to perform this action.")
     if request.method == "POST":
         form = BibTeXUploadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -382,7 +384,8 @@ def download_article(request, article_id):
 @login_required
 def add_note(request, article_id):
     article = get_object_or_404(Article, id=article_id)
-
+    if request.user.get_role() == "reviewer":
+        return HttpResponseForbidden("reViewers are not allowed to perform this action.")
     if request.method == 'POST':
         form = NoteForm(request.POST)
         form.fields['file'].queryset = article.files.all()  # ✅ restrict to this article's files
@@ -480,3 +483,5 @@ def update_summary_view(request, article_id):
     article.save()
     messages.success(request, "Summary updated successfully.")
     return redirect("article:article_detail", article_id=article.id)
+
+

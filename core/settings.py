@@ -151,3 +151,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'ryyannoor2312@gmail.com'         # 🔁 Replace with your Gmail
 EMAIL_HOST_PASSWORD = 'mtsp ctum ifuw orok'   # 🔁 Replace with App Password
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

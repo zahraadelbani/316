@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Change User Role{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto p-6 bg-white rounded shadow">
+  <h2 class="text-2xl font-bold mb-4">Change Role for {{ user.name|default:user.email }}</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    
+    <div class="mb-4">
+      <label for="role" class="block font-medium mb-1">Select New Role:</label>
+      <select name="role" id="role" class="w-full border px-3 py-2 rounded">
+        {% for key, label in user.ROLE_CHOICES %}
+          <option value="{{ key }}" {% if user.role == key %}selected{% endif %}>
+            {{ label }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="flex justify-between">
+      <a href="{% url 'users:list_users' %}" class="text-gray-500 hover:underline">← Back</a>
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        ✅ Update Role
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -11,11 +11,16 @@ from .serializers import (
 )
 
 
+from rest_framework.permissions import BasePermission
+
+class IsNotReviewer(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.get_role() != "reviewer"
+
 class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
+    permission_classes = [IsNotReviewer]
     def perform_create(self, serializer):
         serializer.save(uploaded_by=self.request.user)
 
@@ -38,7 +43,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
 class NoteViewSet(viewsets.ModelViewSet):
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsNotReviewer]
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
@@ -47,10 +52,10 @@ class NoteViewSet(viewsets.ModelViewSet):
 class ArticleFileViewSet(viewsets.ModelViewSet):
     queryset = ArticleFile.objects.all()
     serializer_class = ArticleFileSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsNotReviewer]
 
 
 class ReferenceViewSet(viewsets.ModelViewSet):
     queryset = Reference.objects.all()
     serializer_class = ReferenceSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsNotReviewer]

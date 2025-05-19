@@ -12,14 +12,21 @@
     <a href="/" class="text-xl font-bold">📚 Article Manager</a>
   </div>
 
-  <div>
+  <div class="flex items-center space-x-4">
     {% if user.is_authenticated %}
-      <span class="mr-4">Welcome, {{ user.name }}!</span>
-      <a href="{% url 'users:profile' %}" class="text-blue-600 mr-4">Profile</a>
+      <span>Welcome, {{ user.name }}!</span>
+
+      {% if user.is_superuser %}
+        <a href="{% url 'users:list_users' %}" class="text-blue-600 hover:underline">User List</a>
+      {% else %}
+        <a href="{% url 'article:article_list' %}" class="text-blue-600 hover:underline">Articles</a>
+      {% endif %}
+
+      <a href="{% url 'users:profile' %}" class="text-blue-600 hover:underline">Profile</a>
       <a href="{% url 'users:logout' %}" class="text-red-600 hover:underline">Logout</a>
     {% else %}
-      <a href="{% url 'users:login' %}" class="text-blue-600 mr-4">Login</a>
-      <a href="{% url 'users:register' %}" class="text-green-600">Register</a>
+      <a href="{% url 'users:login' %}" class="text-blue-600 hover:underline">Login</a>
+      <a href="{% url 'users:register' %}" class="text-green-600 hover:underline">Register</a>
     {% endif %}
   </div>
 </nav>
