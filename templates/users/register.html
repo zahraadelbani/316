@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="max-w-md mx-auto mt-10 p-6 bg-white shadow rounded">
+    <h2 class="text-2xl font-bold mb-4">Register</h2>
+    <form method="POST" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div>
+            {{ form.email.label_tag }} {{ form.email }}
+        </div>
+        <div>
+            {{ form.name.label_tag }} {{ form.name }}
+        </div>
+        <div>
+            {{ form.role.label_tag }} {{ form.role }}
+        </div>
+        <div>
+            {{ form.profile_picture.label_tag }} {{ form.profile_picture }}
+        </div>
+        <div>
+            {{ form.password1.label_tag }} {{ form.password1 }}
+        </div>
+        <div>
+            {{ form.password2.label_tag }} {{ form.password2 }}
+        </div>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Register</button>
+    </form>
+    <p class="mt-4 text-sm">Already have an account? <a href="{% url 'users:login' %}" class="text-blue-500">Login</a></p>
+</div>
+{% endblock %}

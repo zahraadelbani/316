@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Article Upload</title>
+</head>
+<body>
+  <h1>Test Article Upload</h1>
+  <form action="/api/upload/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label>Title:<br>
+      <input type="text" name="title" value="My Test Article">
+    </label><br><br>
+
+    <label>Abstract:<br>
+      <textarea name="abstract" rows="4" cols="50">A short summary…</textarea>
+    </label><br><br>
+
+    <label>Keywords:<br>
+      <input type="text" name="keywords" value="AI, research, ML">
+    </label><br><br>
+
+    <label>Project ID:<br>
+      <input type="text" name="project" value="">
+      <small>(leave blank or enter an existing project’s ID)</small>
+    </label><br><br>
+
+    <label>Files:<br>
+      <input type="file" name="file" multiple>
+    </label><br><br>
+
+    <button type="submit">Upload</button>
+  </form>
+</body>
+</html>

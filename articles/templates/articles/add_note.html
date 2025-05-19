@@ -1,0 +1,15 @@
+{% block content %}
+  <div class="max-w-2xl mx-auto p-6 bg-white shadow rounded">
+    <h1 class="text-xl font-bold mb-4">📝 Add Note for "{{ article.title }}"</h1>
+    
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Add Note
+      </button>
+    </form>
+
+    <a href="{% url 'article:article_detail' article.id %}" class="text-blue-600 underline mt-4 inline-block">← Back to Article</a>
+  </div>
+{% endblock %}

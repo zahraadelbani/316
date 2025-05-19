@@ -1,0 +1,23 @@
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
+  <h1 class="text-xl font-bold mb-4">➕ Upload Files for "{{ article.title }}"</h1>
+  {% if messages %}
+  <ul class="mb-4 text-red-600">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="file_field" multiple required class="block w-full border p-2 rounded mb-4">
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      Upload
+    </button>
+  </form>
+
+  <a href="{% url 'article:article_detail' article.id %}" class="text-blue-600 mt-4 inline-block hover:underline">← Back to Article</a>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="max-w-md mx-auto mt-10 p-6 bg-white shadow rounded">
+    <h2 class="text-2xl font-bold mb-4">Login</h2>
+    <form method="POST" class="space-y-4">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div>
+            {{ form.username.label_tag }} {{ form.username }}
+        </div>
+        <div>
+            {{ form.password.label_tag }} {{ form.password }}
+        </div>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Login</button>
+    </form>
+    <p class="mt-2 text-sm">
+  <a href="{% url 'users:password_reset' %}" class="text-blue-500">Forgot your password?</a>
+</p>
+    <p class="mt-4 text-sm">Don't have an account? <a href="{% url 'users:register' %}" class="text-blue-500">Register</a></p>
+</div>
+{% endblock %}

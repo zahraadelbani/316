@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto p-6 bg-white shadow rounded">
+  <h1 class="text-2xl font-bold mb-6">Add Citation</h1>
+  
+  <form method="post" class="space-y-4">
+    {% csrf_token %}
+    
+    <div>
+      <label for="{{ form.citation_text.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+        Citation Text
+      </label>
+      {{ form.citation_text }}
+    </div>
+
+    <div>
+      <label for="{{ form.citation_style.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+        Citation Style
+      </label>
+      {{ form.citation_style }}
+    </div>
+
+    <div>
+      <label for="{{ form.author.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+        Author
+      </label>
+      {{ form.author }}
+    </div>
+
+    <div>
+      <label for="{{ form.year.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+        Year
+      </label>
+      {{ form.year }}
+    </div>
+
+    <div>
+      <label for="{{ form.source.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+        Source (Journal/Book/Publisher)
+      </label>
+      {{ form.source }}
+    </div>
+
+    <div class="flex gap-4 mt-6">
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Add Citation
+      </button>
+      <a href="{% url 'article:article_detail' article.id %}" class="text-gray-600 hover:text-gray-800">
+        Cancel
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %} 

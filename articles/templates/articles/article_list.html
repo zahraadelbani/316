@@ -1,4 +1,8 @@
-{% load static %}
+{% extends "base.html" %}
+{% block title %}Article List{% endblock %}
+
+{% block content %}
+{% load static %} 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,7 +20,7 @@
         <img src="https://cdn-icons-png.flaticon.com/512/3682/3682009.png" class="w-8 h-8" alt="icon">
         Article List
       </h1>
-      <a href="{% url 'import_bibtex' %}" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700">
+      <a href="{% url 'article:import_bibtex' %}" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700">
         📤 Import BibTeX
       </a>
     </div>
@@ -47,42 +51,73 @@
     <div class="bg-white p-4 rounded shadow mb-6">
       <h2 class="text-xl font-semibold mb-2">📤 Export Citations</h2>
       <div class="flex flex-wrap gap-4">
-        <a href="{% url 'export_citations' %}?format=APA" target="_blank"
+        <a href="{% url 'article:export_citations' %}?format=APA" target="_blank"
            class="bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700">APA (JSON)</a>
-        <a href="{% url 'export_citations' %}?format=MLA" target="_blank"
+        <a href="{% url 'article:export_citations' %}?format=MLA" target="_blank"
            class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">MLA (JSON)</a>
-        <a href="{% url 'export_citations' %}?format=Chicago" target="_blank"
+        <a href="{% url 'article:export_citations' %}?format=Chicago" target="_blank"
            class="bg-yellow-600 text-white px-3 py-1 rounded hover:bg-yellow-700">Chicago (JSON)</a>
-        <a href="{% url 'export_bibtex_file' %}" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">⬇️ BibTeX</a>
-        <a href="{% url 'export_ris_file' %}" class="bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600">⬇️ RIS</a>
+        <a href="{% url 'article:export_bibtex_file' %}" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">⬇️ BibTeX</a>
+        <a href="{% url 'article:export_ris_file' %}" class="bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600">⬇️ RIS</a>
       </div>
     </div>
 
-    <!-- Article List -->
-    <div class="bg-white p-4 rounded shadow">
-      <h2 class="text-xl font-semibold mb-4">📄 Articles</h2>
-      {% if articles %}
-        <ul class="space-y-4">
-          {% for article in articles %}
-            <li class="border-b pb-3">
-              <h3 class="text-lg font-bold">{{ article.title }}</h3>
-              <p class="text-sm text-gray-600">
-                Project:
-                {% if article.project %}
-                  {{ article.project.name }}
-                {% else %}
-                  <em>None</em>
-                {% endif %}
-              </p>
-              <p class="text-sm text-gray-500">Uploaded at: {{ article.uploaded_at|date:"Y-m-d H:i" }}</p>
-            </li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <div class="text-center text-gray-500">No articles found.</div>
-      {% endif %}
+    <!-- Upload Button -->
+    <div class="mb-6">
+      <a href="{% url 'article:upload_article' %}" class="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700">
+        ➕ Upload New Article
+      </a>
     </div>
+
+    <!-- Article List -->
+<div class="bg-white p-4 rounded shadow">
+  <h2 class="text-xl font-semibold mb-4">📄 Articles</h2>
+  {% if articles %}
+    <ul class="space-y-4">
+      {% for article in articles %}
+        <li class="border-b pb-3">
+          <h3 class="text-lg font-bold">{{ article.title }}</h3>
+
+          <p class="text-sm text-gray-600">
+            Project:
+            {% if article.project %}
+              {{ article.project.name }}
+            {% else %}
+              <em>None</em>
+            {% endif %}
+          </p>
+{% if article.summary %}
+  <span class="text-green-600 text-xs ml-2">✔ Summary Added</span>
+{% else %}
+  <span class="text-red-500 text-xs ml-2">⚠ No Summary</span>
+{% endif %}
+          <p class="text-sm text-gray-500">
+            📤 Uploaded by:
+            {{ article.uploaded_by.name|default:article.uploaded_by.email }}
+          </p>
+
+          <p class="text-sm text-gray-500">
+            🕒 Uploaded at: {{ article.uploaded_at|date:"Y-m-d H:i" }}
+          </p>
+
+          <!-- Actions -->
+          <div class="mt-2">
+            {% if article.uploaded_by == user or user.is_superuser %}
+              <a href="{% url 'article:edit_article' article.id %}" class="text-blue-600 hover:underline mr-4">✏️ Edit</a>
+              <a href="{% url 'article:delete_article' article.id %}" class="text-red-600 hover:underline mr-4">🗑️ Delete</a>
+            {% endif %}
+            <a href="{% url 'article:article_detail' article.id %}" class="text-sm text-blue-600 hover:underline">🔍 View Details</a>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="text-center text-gray-500">No articles found.</div>
+  {% endif %}
+</div>
+
 
   </div>
 </body>
 </html>
+{% endblock %}

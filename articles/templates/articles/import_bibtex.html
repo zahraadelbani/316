@@ -1,9 +1,8 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>📤 Import BibTeX</title>
+  <title>📄 Import BibTeX</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-900">
@@ -16,7 +15,7 @@
         <img src="https://cdn-icons-png.flaticon.com/512/3682/3682009.png" class="w-7 h-7" alt="icon">
         Import BibTeX
       </h1>
-      <a href="{% url 'article_list' %}" class="text-sm text-blue-600 hover:underline">
+      <a href="{% url 'article:article_list' %}" class="text-sm text-blue-600 hover:underline">
         ← Back to Articles
       </a>
     </div>
@@ -25,10 +24,36 @@
     <div class="bg-white shadow rounded-lg p-6">
       <form method="POST" enctype="multipart/form-data" class="space-y-6">
         {% csrf_token %}
+
+        <!-- Article Selection -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">BibTeX File (.bib)</label>
+          <label for="{{ form.article.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+            Associate With Article
+          </label>
+          {{ form.article }}
+        </div>
+
+        <!-- Bib File Upload -->
+        <div>
+          <label for="{{ form.bib_file.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+            BibTeX File (.bib)
+          </label>
           {{ form.bib_file }}
         </div>
+
+        <!-- Citation Style -->
+        <div>
+          <label for="citation_style" class="block text-sm font-medium text-gray-700 mb-1">
+            Citation Style
+          </label>
+          <select name="citation_style" id="citation_style" class="border p-2 w-full rounded">
+            <option value="APA">APA</option>
+            <option value="MLA">MLA</option>
+            <option value="Chicago">Chicago</option>
+          </select>
+        </div>
+
+        <!-- Submit -->
         <button type="submit"
           class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
           Upload & Import
@@ -36,7 +61,7 @@
       </form>
     </div>
 
-    <!-- Optional Message -->
+    <!-- Optional Messages -->
     {% if messages %}
       <div class="mt-6">
         {% for message in messages %}
