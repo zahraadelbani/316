@@ -4,7 +4,8 @@ from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, render
 from .models import Article, ArticleFile, Note, Project, User
 from django.db.models import Q
-import bibtexparser
+from bibtexparser.bparser import BibTexParser
+from bibtexparser import loads
 from .forms import ArticleUploadForm, BibTeXUploadForm, NoteForm, CitationForm
 from .models import Reference, Article
 from django.contrib.auth.decorators import login_required
@@ -44,8 +45,9 @@ def article_list(request):
 
 @login_required
 def import_bibtex(request):
-    if request.user.get_role() == "reviewer":
-        return HttpResponseForbidden("reViewers are not allowed to perform this action.")
+    if request.user.get_role == "reviewer":
+        return HttpResponseForbidden("Reviewers are not allowed to perform this action.")
+
     if request.method == "POST":
         form = BibTeXUploadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -53,14 +55,15 @@ def import_bibtex(request):
             bib_data = bib_file.read().decode("utf-8")
             selected_article = form.cleaned_data["article"]
 
-            # 🔒 Enforce security: only uploader or superuser can import
             if request.user != selected_article.uploaded_by and not request.user.is_superuser:
                 return HttpResponseForbidden("You are not allowed to import citations for this article.")
 
-            style = request.POST.get("citation_style", "APA")
+            citation_style = request.POST.get("citation_style", "APA")
 
-            parser = bibtexparser.loads(bib_data)
-            for entry in parser.entries:
+            parser = BibTexParser()
+            bib_database = loads(bib_data, parser=parser)
+
+            for entry in bib_database.entries:
                 citation_text = entry.get("title", "Unknown Title")
                 author = entry.get("author", "")
                 year = entry.get("year", "")
@@ -69,7 +72,7 @@ def import_bibtex(request):
                 Reference.objects.create(
                     article=selected_article,
                     citation_text=citation_text,
-                    citation_style=style,
+                    citation_style=citation_style,
                     author=author,
                     year=year,
                     source=source,
