@@ -10,6 +10,7 @@ urlpatterns = [
     path('api/', include('articles.api_urls')),
     path('api/token/', obtain_auth_token, name='api_token_auth'),
     path('users/', include('users.urls')),
+    path('__reload__/', include('django_browser_reload.urls')),
 
 ]
 if settings.DEBUG:

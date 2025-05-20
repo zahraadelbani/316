@@ -58,9 +58,13 @@ def import_bibtex(request):
                 return HttpResponseForbidden("You are not allowed to import citations for this article.")
 
             style = request.POST.get("citation_style", "APA")
-
-            parser = bibtexparser.loads(bib_data)
-            for entry in parser.entries:
+            
+            # Create a new parser instance
+            parser = bibtexparser.bparser.BibTexParser()
+            # Parse the bibtex data
+            bib_database = bibtexparser.loads(bib_data, parser=parser)
+            
+            for entry in bib_database.entries:
                 citation_text = entry.get("title", "Unknown Title")
                 author = entry.get("author", "")
                 year = entry.get("year", "")
