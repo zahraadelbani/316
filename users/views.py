@@ -13,28 +13,25 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             messages.success(request, "Registration successful.")
-            return redirect('users:login')  # Redirect to login after registration
+            return redirect('users:login')
+        else:
+            messages.error(request, "Please fix the errors below.")
     else:
         form = CustomSignupForm()
     return render(request, 'users/register.html', {'form': form})
 
-
 def login_view(request):
     if request.method == 'POST':
-        email = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=email, password=password)
-        if user is not None:
-            login(request, user)
-            # 🔁 Redirect based on role
-            if user.is_superuser:
+        form = CustomLoginForm(request, data=request.POST)
+        if form.is_valid():
+            login(request, form.get_user())
+            if request.user.is_superuser:
                 return redirect('users:list_users')
-            else:
-                return redirect('article:article_list')
-        else:
-            messages.error(request, "Invalid credentials.")
-    form = CustomLoginForm()
+            return redirect('article:article_list')
+    else:
+        form = CustomLoginForm()
     return render(request, 'users/login.html', {'form': form})
+
 
 
 @login_required

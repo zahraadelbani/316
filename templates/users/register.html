@@ -8,33 +8,50 @@
   <div class="max-w-md w-full mx-4 p-4 bg-white backdrop-blur-sm border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800/90 dark:border-gray-700">
     <form class="space-y-3" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
-      {{ form.non_field_errors }}
+           {% if form.non_field_errors %}
+        <p class="text-sm text-red-500 text-center">{{ form.non_field_errors.0 }}</p>
+      {% endif %}
       <h5 class="text-2xl font-bold text-gray-900 dark:text-white text-center mb-4">Create an account</h5>
       
       <div>
         <label for="{{ form.email.id_for_label }}" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
         <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" placeholder="name@company.com" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
+              {% if form.email.errors %}
+          <p class="text-sm text-red-500 mt-1">{{ form.email.errors.0 }}</p>
+        {% endif %}
       </div>
       
       <div>
         <label for="{{ form.name.id_for_label }}" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Your name</label>
         <input type="text" name="{{ form.name.name }}" id="{{ form.name.id_for_label }}" placeholder="John Doe" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
+              {% if form.name.errors %}
+          <p class="text-sm text-red-500 mt-1">{{ form.name.errors.0 }}</p>
+        {% endif %}
       </div>
       
       <div>
         <label for="{{ form.profile_picture.id_for_label }}" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Profile picture</label>
         <input type="file" name="{{ form.profile_picture.name }}" id="{{ form.profile_picture.id_for_label }}" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" aria-describedby="profile_picture_help" />
         <div class="mt-1 text-xs text-gray-500 dark:text-gray-300" id="profile_picture_help">A profile picture is useful to confirm you are logged into your account</div>
+              {% if form.profile_picture.errors %}
+          <p class="text-sm text-red-500 mt-1">{{ form.profile_picture.errors.0 }}</p>
+        {% endif %}
       </div>
       
       <div>
         <label for="{{ form.password1.id_for_label }}" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Your password</label>
         <input type="password" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
+            {% if form.password1.errors %}
+          <p class="text-sm text-red-500 mt-1">{{ form.password1.errors.0 }}</p>
+        {% endif %}
       </div>
       
       <div>
         <label for="{{ form.password2.id_for_label }}" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Confirm password</label>
         <input type="password" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
+              {% if form.password2.errors %}
+          <p class="text-sm text-red-500 mt-1">{{ form.password2.errors.0 }}</p>
+        {% endif %}
       </div>
 
       <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Create account</button>

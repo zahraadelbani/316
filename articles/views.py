@@ -52,7 +52,17 @@ def import_bibtex(request):
         form = BibTeXUploadForm(request.POST, request.FILES)
         if form.is_valid():
             bib_file = request.FILES["bib_file"]
-            bib_data = bib_file.read().decode("utf-8")
+
+            if not bib_file.name.endswith(".bib"):
+                messages.error(request, "Please upload a file with .bib extension.")
+                return redirect("article:import_bibtex")
+
+            try:
+                bib_data = bib_file.read().decode("utf-8")
+            except UnicodeDecodeError:
+                messages.error(request, "The uploaded .bib file is not properly UTF-8 encoded.")
+                return redirect("article:import_bibtex")
+
             selected_article = form.cleaned_data["article"]
 
             if request.user != selected_article.uploaded_by and not request.user.is_superuser:
@@ -60,8 +70,12 @@ def import_bibtex(request):
 
             citation_style = request.POST.get("citation_style", "APA")
 
-            parser = BibTexParser()
-            bib_database = loads(bib_data, parser=parser)
+            try:
+                parser = BibTexParser()
+                bib_database = loads(bib_data, parser=parser)
+            except Exception:
+                messages.error(request, "Failed to parse the .bib file. Please ensure it has valid BibTeX format.")
+                return redirect("article:import_bibtex")
 
             for entry in bib_database.entries:
                 citation_text = entry.get("title", "Unknown Title")
