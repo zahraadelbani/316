@@ -1,42 +1,170 @@
 {% load tailwind_tags %}
+{% load static %}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Research Article Management{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Flowbite CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
     {% tailwind_css %}
 </head>
-<body class="bg-gray-100 text-gray-900">
-
-<nav class="flex justify-between items-center p-4 bg-white shadow">
-  <div>
-    <a href="/" class="text-xl font-bold">📚 Article Manager</a>
+<body class="text-gray-900" style="background: linear-gradient(135deg, #4792d7 0%, #ffffff 50%, #e6f3ff 100%);">
+  {% if messages %}
+  <div id="message-container" class="fixed top-10 right-5 space-y-4 z-[9999]">
+    {% for message in messages %}
+    <div class="alert-message transition-all transform translate-x-full opacity-0 p-4 rounded-lg text-white shadow-lg w-80 
+    {% if message.tags == 'success' %} bg-green-500 
+    {% elif message.tags == 'info' %} bg-blue-500 
+    {% elif message.tags == 'warning' %} bg-yellow-500 
+    {% elif message.tags == 'error' %} bg-red-500 {% endif %}">
+    {{ message }}
   </div>
-
-  <div class="flex items-center space-x-4">
-    {% if user.is_authenticated %}
-      <span>Welcome, {{ user.name }}!</span>
-
-      {% if user.is_superuser %}
-        <a href="{% url 'users:list_users' %}" class="text-blue-600 hover:underline">User List</a>
-      {% else %}
-        <a href="{% url 'article:article_list' %}" class="text-blue-600 hover:underline">Articles</a>
-      {% endif %}
-
-      <a href="{% url 'users:profile' %}" class="text-blue-600 hover:underline">Profile</a>
-      <a href="{% url 'users:logout' %}" class="text-red-600 hover:underline">Logout</a>
-    {% else %}
-      <a href="{% url 'users:login' %}" class="text-blue-600 hover:underline">Login</a>
-      <a href="{% url 'users:register' %}" class="text-green-600 hover:underline">Register</a>
+  
+    {% endfor %}
     {% endif %}
+
+  </div>
+<!-- Flowbite Navbar with User Dropdown -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-lg dark:bg-gray-900/70">
+  <div class="max-w-screen-xl flex items-center justify-between mx-auto p-4">
+    <a href="/" class="flex items-center">
+      <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Article Manager</span>
+    </a>
+    
+    <div class="flex items-center gap-8">
+      <div class="hidden md:block" id="navbar-user">
+        <ul class="flex items-center gap-8">
+          {% if user.is_authenticated %}
+            <li>
+              <a href="{% url 'article:article_list' %}" class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Articles</a>
+            </li>
+            {% if user.is_superuser %}
+              <li>
+                <a href="{% url 'users:list_users' %}" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Users</a>
+              </li>
+            {% endif %}
+            <li>
+              <a href="{% url 'users:profile' %}" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Profile</a>
+            </li>
+          {% else %}
+            <li>
+              <a href="/" class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Home</a>
+            </li>
+            <li>
+              <a href="{% url 'users:login' %}" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Login</a>
+            </li>
+            <li>
+              <a href="{% url 'users:register' %}" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Register</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <div class="flex items-center">
+        {% if user.is_authenticated %}
+          <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+            <span class="sr-only">Open user menu</span>
+            <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
+              {{ user.name|default:user.email|first|upper }}
+            </div>
+          </button>
+          <!-- Dropdown menu -->
+          <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
+            <div class="px-4 py-3">
+              <span class="block text-sm text-gray-900 dark:text-white">{{ user.name|default:user.email }}</span>
+              <span class="block text-sm text-gray-500 truncate dark:text-gray-400">{{ user.email }}</span>
+            </div>
+            <ul class="py-2" aria-labelledby="user-menu-button">
+              {% if user.is_superuser %}
+              <li>
+                <a href="{% url 'users:list_users' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">User Management</a>
+              </li>
+              {% endif %}
+              <li>
+                <a href="{% url 'article:article_list' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Articles</a>
+              </li>
+              <li>
+                <a href="{% url 'users:profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Profile</a>
+              </li>
+              <li>
+                <button type="button" data-modal-target="signout-modal" data-modal-toggle="signout-modal" class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</button>
+              </li>
+            </ul>
+          </div>
+        {% else %}
+          <a href="{% url 'users:login' %}" class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Login</a>
+          <a href="{% url 'users:register' %}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Register</a>
+        {% endif %}
+        
+        <button data-collapse-toggle="navbar-user" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-user" aria-expanded="false">
+          <span class="sr-only">Open main menu</span>
+          <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
 </nav>
 
-<main class="container mx-auto px-4">
-    {% block content %}
-    {% endblock %}
+<!-- Main Content - Adjusted for navbar -->
+<main class="container mx-auto px-4 py-6 mt-10" >
+    {% block content %}{% endblock %}
 </main>
-<script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
+<!-- Sign Out Confirmation Modal -->
+<div id="signout-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <div class="p-4 text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-300 dark:border-blue-800" role="alert">
+                <div class="flex items-center">
+                    <svg class="shrink-0 w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                    </svg>
+                    <span class="sr-only">Info</span>
+                    <h3 class="text-lg font-medium">Confirm Sign Out</h3>
+                </div>
+                <div class="mt-2 mb-4 text-sm">
+                    Are you sure you want to sign out? You will need to log in again to access your account.
+                </div>
+                <div class="flex">
+                    <a href="{% url 'users:logout' %}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-3 py-1.5 me-2 text-center inline-flex items-center dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Yes, Sign Out
+                    </a>
+                    <button type="button" class="text-blue-800 bg-transparent border border-blue-800 hover:bg-blue-900 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center dark:hover:bg-blue-300 dark:border-blue-300 dark:text-blue-300 dark:hover:text-gray-800 dark:focus:ring-blue-800" data-modal-hide="signout-modal">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Flowbite JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+
+<!-- Message Animation Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const messages = document.querySelectorAll('.alert-message');
+  messages.forEach((message, index) => {
+    // Add a slight delay for each message
+    setTimeout(() => {
+      message.classList.remove('translate-x-full', 'opacity-0');
+      message.classList.add('translate-x-0', 'opacity-100');
+      
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        message.classList.remove('translate-x-0', 'opacity-100');
+        message.classList.add('translate-x-full', 'opacity-0');
+      }, 5000);
+    }, index * 100); // Stagger the animations
+  });
+});
+</script>
 </body>
 </html>

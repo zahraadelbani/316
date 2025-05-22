@@ -1,230 +1,371 @@
+{% extends "base.html" %}
+{% load static %}
+{% load tailwind_tags %}
+{% tailwind_css %}
 {% block content %}
-<div class="max-w-4xl mx-auto p-6 bg-white shadow rounded">
-  <h1 class="text-3xl font-bold mb-2">{{ article.title }}</h1>
-  <p class="text-gray-700 mb-2"><strong>Abstract:</strong> {{ article.abstract }}</p>
-  <p class="text-sm text-gray-600 mb-2"><strong>Uploaded:</strong> {{ article.uploaded_at }}</p>
-  <p class="text-sm text-gray-600 mb-2"><strong>Keywords:</strong> {{ article.keywords }}</p>
-  <p class="text-sm text-gray-600">👤 Uploaded by: {{ article.uploaded_by.name|default:article.uploaded_by.email }}</p>
 
-  {% if article.summary %}
-  <div class="bg-gray-50 p-4 rounded mb-4">
-    <h2 class="text-lg font-semibold mb-2">🧠 Summary</h2>
-    <p class="text-gray-700">{{ article.summary }}</p>
-  </div>
-  {% endif %}
+<link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
 
-  {% if user == article.uploaded_by or user.is_superuser %}
-  <div class="mt-6 bg-white p-4 rounded shadow">
-    <h3 class="text-lg font-bold mb-2">✍️ Update Summary</h3>
-    <form method="post" action="{% url 'article:update_summary' article.id %}">
-      {% csrf_token %}
-      <textarea name="summary" rows="4" class="w-full p-2 border rounded mb-2">{{ article.summary }}</textarea>
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Update Summary</button>
-    </form>
-  </div>
-  {% endif %}
-
-  <h2 class="text-xl font-semibold mt-6 mb-2">📄 Files</h2>
-  <ul class="list-disc pl-4">
-    {% for file in article.files.all %}
-      <li class="flex items-center justify-between">
-        <div>
-          <a href="{{ file.file.url }}" class="text-blue-600 hover:underline" target="_blank">
-            {{ file.file.name|cut:"articles/" }}
+<div class="min-h-screen bg-gray- class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Navigation Tabs -->
+    <div id="article-tabs" class="mb-6">
+      <div class="border-b border-gray-200">
+        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+          <a href="#overview" class="border-blue-500 text-white hover:text-blue-700 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+            Overview
           </a>
-        </div>
-        {% if user == article.uploaded_by or user.is_superuser %}
-        <form action="{% url 'article:delete_article_file' file.id %}" method="post" class="ml-4">
-          {% csrf_token %}
-          <button type="submit" class="text-red-600 text-sm hover:underline">🗑 Delete</button>
-        </form>
-        {% endif %}
-      </li>
-    {% empty %}
-      <li class="text-gray-500">No files uploaded.</li>
-    {% endfor %}
-  </ul>
-
-  {% if user == article.uploaded_by or user.is_superuser %}
-  <a href="{% url 'article:add_article_file' article.id %}" class="text-sm text-blue-600 hover:underline">
-    ➕ Add More Files
-  </a>
-  {% endif %}
-
-  <div>
-    
-    <a href="/api/articles/{{ article.id }}/" target="_blank"
-       class="bg-blue-50 text-blue-700 px-3 py-1 rounded hover:bg-blue-100 text-sm">
-      📄 View Article Metadata API
-    </a>
-  </div>
-
-  <!-- 📝 Notes Section -->
-  <div class="mt-10 bg-white p-6 rounded shadow">
-    <h2 class="text-xl font-semibold mb-4">📝 Notes</h2>
-    {% if notes %}
-    <ul class="space-y-4">
-      {% for note in notes %}
-        <p class="text-xs text-gray-400">
-          ✍️ Created by: {{ note.created_by.name|default:note.created_by.email }} at {{ note.created_at|date:"Y-m-d H:i" }}
-        </p>
-        <li class="border-b pb-3">
-          <p class="text-gray-800">{{ note.content }}</p>
-          {% if note.page_number %}
-          <p class="text-sm text-gray-500">📄 Page: {{ note.page_number }}</p>
+          <a href="#files" class="border-transparent text-white hover:text-blue-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+            Files
+          </a>
+          <a href="#notes" class="border-transparent text-white hover:text-blue-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+            Notes
+          </a>
+          <a href="#citations" class="border-transparent text-white hover:text-blue-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+            Citations
+          </a>
+          {% if user.is_staff or user.is_superuser %}
+          <a href="#api" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+            API Access
+          </a>
           {% endif %}
-          {% if note.file %}
-          <p class="text-sm text-gray-500">
-            📎 Linked File:
-            <a href="{{ note.file.file.url }}" target="_blank" class="underline text-blue-600">
-              {{ note.file.file.name|cut:'articles/' }}
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Left Sidebar -->
+      <div class="lg:col-span-1">
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 sticky top-6">
+          <div class="flex justify-between items-center mb-6">
+            <h1 class="text-xl font-bold text-gray-900">{{ article.title }}</h1>
+            <a href="{% url 'article:article_list' %}" 
+               class="text-gray-700 bg-gray-100 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 text-center border border-gray-200">
+              ← Back
             </a>
-          </p>
-          {% endif %}
-          {% if note.created_by == user and user.get_role != "reviewer" %}
-          <div class="mt-1 text-sm">
-            <a href="{% url 'article:edit_note' note.id %}" class="text-blue-600 hover:underline">Edit</a> |
-            <a href="{% url 'article:delete_note' note.id %}" class="text-red-600 hover:underline">Delete</a>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="space-y-4 mb-6">
+            {% if user == article.uploaded_by or user.is_superuser %}
+            <a href="{% url 'article:edit_article' article.id %}" 
+               class="flex items-center gap-2 text-gray-700 bg-blue-50 hover:bg-blue-100 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center border border-blue-200">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+              </svg>
+              Edit Article
+            </a>
+            {% endif %}
+            <a href="{% url 'article:add_article_file' article.id %}" 
+               class="flex items-center gap-2 text-gray-700 bg-green-50 hover:bg-green-100 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 text-center border border-green-200">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+              Add Files
+            </a>
+          </div>
+
+          <!-- Article Metadata -->
+          <div class="space-y-4">
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h3 class="text-sm font-medium text-gray-900 mb-2">Abstract</h3>
+              <p class="text-gray-700 text-sm">{{ article.abstract }}</p>
+            </div>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-500">Uploaded</span>
+                <span class="text-gray-900">{{ article.uploaded_at }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-500">Keywords</span>
+                <span class="text-gray-900">{{ article.keywords }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-500">Uploaded by</span>
+                <span class="text-gray-900">{{ article.uploaded_by.name|default:article.uploaded_by.email }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Overview Section -->
+        <div id="overview" class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Overview</h2>
+          
+          {% if article.summary %}
+          <div class="mb-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Summary</h3>
+            <p class="text-gray-700">{{ article.summary }}</p>
           </div>
           {% endif %}
-        </li>
-      {% endfor %}
-    </ul>
-    {% else %}
-    <p class="text-gray-500">No notes yet for this article.</p>
-    {% endif %}
-  </div>
 
-  {% if user.get_role != "reviewer" %}
-  <!-- ➕ Add New Note -->
-  <div class="mt-6 bg-white p-6 rounded shadow">
-    <h3 class="text-lg font-bold mb-2">Add Note</h3>
-    <form method="post" action="{% url 'article:add_note' article.id %}" class="space-y-4">
-      {% csrf_token %}
-      {{ note_form.non_field_errors }}
-      <div>
-        {{ note_form.content.label_tag }}<br>
-        {{ note_form.content }}
-        {{ note_form.content.errors }}
-      </div>
-      <div>
-        {{ note_form.page_number.label_tag }}<br>
-        {{ note_form.page_number }}
-        {{ note_form.page_number.errors }}
-      </div>
-      <div>
-        {{ note_form.file.label_tag }}<br>
-        {{ note_form.file }}
-        {{ note_form.file.errors }}
-      </div>
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        ➕ Submit Note
-      </button>
-    </form>
-  </div>
-  {% endif %}
-
-  {% if user.is_staff or user.is_superuser %}
-  <!-- 🔍 Developer / NLP API Access -->
-  <div class="space-x-2 my-4">
-    <a href="/api/notes/?article={{ article.id }}" target="_blank"
-       class="bg-yellow-50 text-yellow-800 px-3 py-1 rounded hover:bg-yellow-100 text-sm">
-      📝 View Notes API
-    </a>
-    <a href="/api/references/?article={{ article.id }}" target="_blank"
-       class="inline-block bg-gray-100 text-blue-700 px-3 py-1 rounded hover:bg-gray-200 text-sm">
-      🔍 View Citation API
-    </a>
-  </div>
-  {% endif %}
-
-  <!-- 📚 Citations Section -->
-  <h2 class="text-xl font-semibold mt-6 mb-2">📚 Citations</h2>
-  {% if article.references.all %}
-  <ul class="list-disc pl-6 space-y-2">
-    {% for citation in article.references.all %}
-    <li class="p-3 bg-gray-50 rounded flex items-center justify-between">
-      <div class="flex items-center space-x-2">
-        <input type="checkbox" form="export-form" name="citation_ids" value="{{ citation.id }}" class="mt-1">
-        <span>
-          <p><strong>{{ citation.citation_text }}</strong>
-          {% if citation.author %} by {{ citation.author }}{% endif %},
-          {% if citation.year %} {{ citation.year }}{% endif %}
-          {% if citation.source %}, <em>{{ citation.source }}</em>{% endif %}
-          <span class="text-sm text-gray-500">({{ citation.citation_style }})</span></p>
-          {% if citation.linked_excerpt %}
-            <p class="text-xs text-gray-500 italic">🔗 In-text reference: "{{ citation.linked_excerpt }}"</p>
+          {% if user == article.uploaded_by or user.is_superuser %}
+          <div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Update Summary</h3>
+            <form method="post" action="{% url 'article:update_summary' article.id %}" class="space-y-4">
+              {% csrf_token %}
+              <textarea name="summary" rows="4" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">{{ article.summary }}</textarea>
+              <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                Update Summary
+              </button>
+            </form>
+          </div>
           {% endif %}
-        </span>
-      </div>
-      {% if user == article.uploaded_by or user.is_superuser %}
-      <form action="{% url 'article:delete_citation' citation.id %}" method="post" class="ml-4">
-        {% csrf_token %}
-        <button type="submit" class="text-red-600 text-sm hover:underline">🗑 Delete</button>
-      </form>
-      {% endif %}
-    </li>
-    {% endfor %}
-  </ul>
-  <p class="text-sm text-gray-500 mt-2">Select citations to export:</p>
-  <form id="export-form" method="get" action="{% url 'article:export_selected_citations' %}" class="mt-4">
-    <label for="format" class="block text-sm font-medium text-gray-700">Export Format</label>
-    <select name="format" id="format" class="border p-1 rounded w-40">
-      <option value="APA">APA (TXT)</option>
-      <option value="MLA">MLA (TXT)</option>
-      <option value="Chicago">Chicago (TXT)</option>
-      <option value="bibtex">BibTeX (.bib)</option>
-      <option value="ris">RIS (.ris)</option>
-    </select>
-    <button type="submit" class="mt-2 bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">
-      📤 Export Selected
-    </button>
-  </form>
-  {% else %}
-  <p class="text-gray-500 mb-6">No citations added yet.</p>
-  {% endif %}
+        </div>
 
-  {% if user.get_role != "reviewer" %}
-  <!-- ➕ Add Citation -->
-  <div class="mt-8 bg-white p-6 rounded shadow">
-    <h3 class="text-lg font-bold mb-2">➕ Add Citation</h3>
-    <form method="post" action="{% url 'article:add_citation' article.id %}" class="space-y-4">
-      {% csrf_token %}
-      {{ citation_form.non_field_errors }}
-      <div>
-        {{ citation_form.citation_text.label_tag }}<br>
-        {{ citation_form.citation_text }}
-        {{ citation_form.citation_text.errors }}
+        <!-- Files Section -->
+        <div id="files" class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Files</h2>
+          <div class="space-y-3">
+            {% for file in article.files.all %}
+              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <a href="{{ file.file.url }}" class="text-blue-600 hover:underline flex items-center gap-2" target="_blank">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                  </svg>
+                  {{ file.file.name|cut:"articles/" }}
+                </a>
+                {% if user == article.uploaded_by or user.is_superuser %}
+                <form action="{% url 'article:delete_article_file' file.id %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">
+                    Delete
+                  </button>
+                </form>
+                {% endif %}
+              </div>
+            {% empty %}
+              <p class="text-gray-500">No files uploaded.</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Notes Section -->
+        <div id="notes" class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Notes</h2>
+          
+          {% if notes %}
+          <div class="space-y-4">
+            {% for note in notes %}
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <div class="flex justify-between items-start mb-2">
+                  <p class="text-xs text-gray-500">
+                     {{ note.created_by.name|default:note.created_by.email }} at {{ note.created_at|date:"Y-m-d H:i" }}
+                  </p>
+                  {% if note.created_by == user and user.get_role != "reviewer" %}
+                  <div class="flex gap-2">
+                    <a href="{% url 'article:edit_note' note.id %}" class="text-blue-600 hover:text-blue-800 text-sm">Edit</a>
+                    <a href="{% url 'article:delete_note' note.id %}" class="text-red-600 hover:text-red-800 text-sm">Delete</a>
+                  </div>
+                  {% endif %}
+                </div>
+                <p class="text-gray-800">{{ note.content }}</p>
+                {% if note.page_number %}
+                <p class="text-sm text-gray-500 mt-2">📄 Page: {{ note.page_number }}</p>
+                {% endif %}
+                {% if note.file %}
+                <p class="text-sm text-gray-500 mt-2">
+                  📎 Linked File:
+                  <a href="{{ note.file.file.url }}" target="_blank" class="text-blue-600 hover:underline">
+                    {{ note.file.file.name|cut:'articles/' }}
+                  </a>
+                </p>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="text-gray-500">No notes yet for this article.</p>
+          {% endif %}
+
+          {% if user.get_role != "reviewer" %}
+          <div class="mt-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Add Note</h3>
+            <form method="post" action="{% url 'article:add_note' article.id %}" class="space-y-4">
+              {% csrf_token %}
+              {{ note_form.non_field_errors }}
+              <div>
+                <label for="{{ note_form.content.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                  {{ note_form.content.label }}
+                </label>
+                {{ note_form.content }}
+                {{ note_form.content.errors }}
+              </div>
+              <div>
+                <label for="{{ note_form.page_number.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                  {{ note_form.page_number.label }}
+                </label>
+                {{ note_form.page_number }}
+                {{ note_form.page_number.errors }}
+              </div>
+              <div>
+                <label for="{{ note_form.file.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                  {{ note_form.file.label }}
+                </label>
+                {{ note_form.file }}
+                {{ note_form.file.errors }}
+              </div>
+              <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                Add Note
+              </button>
+            </form>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Citations Section -->
+        <div id="citations" class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Citations</h2>
+
+          {% if article.references.all %}
+          <div class="space-y-3">
+            {% for citation in article.references.all %}
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <div class="flex items-start justify-between">
+                  <div class="flex items-start gap-3">
+                    <input type="checkbox" form="export-form" name="citation_ids" value="{{ citation.id }}" class="mt-1">
+                    <div>
+                      <p class="text-gray-800">
+                        <strong>{{ citation.citation_text }}</strong>
+                        {% if citation.author %} by {{ citation.author }}{% endif %},
+                        {% if citation.year %} {{ citation.year }}{% endif %}
+                        {% if citation.source %}, <em>{{ citation.source }}</em>{% endif %}
+                        <span class="text-sm text-gray-500">({{ citation.citation_style }})</span>
+                      </p>
+                      {% if citation.linked_excerpt %}
+                        <p class="text-xs text-gray-500 italic mt-1">🔗 In-text reference: "{{ citation.linked_excerpt }}"</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% if user == article.uploaded_by or user.is_superuser %}
+                  <form action="{% url 'article:delete_citation' citation.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">
+                      Delete
+                    </button>
+                  </form>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="mt-6 bg-gray-50 p-4 rounded-lg">
+            <p class="text-sm text-gray-700 mb-3">Select citations to export:</p>
+            <form id="export-form" method="get" action="{% url 'article:export_selected_citations' %}" class="flex items-end gap-4">
+              <div>
+                <label for="format" class="block text-sm font-medium text-gray-700 mb-1">Export Format</label>
+                <select name="format" id="format" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                  <option value="APA">APA (TXT)</option>
+                  <option value="MLA">MLA (TXT)</option>
+                  <option value="Chicago">Chicago (TXT)</option>
+                  <option value="bibtex">BibTeX (.bib)</option>
+                  <option value="ris">RIS (.ris)</option>
+                </select>
+              </div>
+              <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                Export Selected
+              </button>
+            </form>
+          </div>
+          {% else %}
+          <p class="text-gray-500">No citations added yet.</p>
+          {% endif %}
+
+          {% if user.get_role != "reviewer" %}
+          <div class="mt-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Add Citation</h3>
+            <form method="post" action="{% url 'article:add_citation' article.id %}" class="space-y-4">
+              {% csrf_token %}
+              {{ citation_form.non_field_errors }}
+              <div>
+                <label for="{{ citation_form.citation_text.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                  {{ citation_form.citation_text.label }}
+                </label>
+                {{ citation_form.citation_text }}
+                {{ citation_form.citation_text.errors }}
+              </div>
+              <div>
+                <label for="{{ citation_form.citation_style.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                  {{ citation_form.citation_style.label }}
+                </label>
+                {{ citation_form.citation_style }}
+                {{ citation_form.citation_style.errors }}
+              </div>
+              <div>
+                <label for="{{ citation_form.author.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                  {{ citation_form.author.label }}
+                </label>
+                {{ citation_form.author }}
+                {{ citation_form.author.errors }}
+              </div>
+              <div>
+                <label for="{{ citation_form.year.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                  {{ citation_form.year.label }}
+                </label>
+                {{ citation_form.year }}
+                {{ citation_form.year.errors }}
+              </div>
+              <div>
+                <label for="{{ citation_form.source.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                  {{ citation_form.source.label }}
+                </label>
+                {{ citation_form.source }}
+                {{ citation_form.source.errors }}
+              </div>
+              <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                Add Citation
+              </button>
+            </form>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- API Access Section -->
+        {% if user.is_staff or user.is_superuser %}
+        <div id="api" class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Developer Access</h2>
+          <div class="flex flex-wrap gap-4">
+            <a href="/api/articles/{{ article.id }}/" target="_blank"
+               class="text-gray-700 bg-blue-100 hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center border border-blue-200">
+              View Article Metadata API
+            </a>
+            <a href="/api/notes/?article={{ article.id }}" target="_blank"
+               class="text-gray-700 bg-yellow-100 hover:bg-yellow-200 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 text-center border border-yellow-200">
+              View Notes API
+            </a>
+            <a href="/api/references/?article={{ article.id }}" target="_blank"
+               class="text-gray-700 bg-purple-100 hover:bg-purple-200 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-4 py-2 text-center border border-purple-200">
+              View Citation API
+            </a>
+          </div>
+        </div>
+        {% endif %}
       </div>
-      <div>
-        {{ citation_form.citation_style.label_tag }}<br>
-        {{ citation_form.citation_style }}
-        {{ citation_form.citation_style.errors }}
-      </div>
-      <div>
-        {{ citation_form.author.label_tag }}<br>
-        {{ citation_form.author }}
-        {{ citation_form.author.errors }}
-      </div>
-      <div>
-        {{ citation_form.year.label_tag }}<br>
-        {{ citation_form.year }}
-        {{ citation_form.year.errors }}
-      </div>
-      <div>
-        {{ citation_form.source.label_tag }}<br>
-        {{ citation_form.source }}
-        {{ citation_form.source.errors }}
-      </div>
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        ➕ Submit Citation
-      </button>
-    </form>
+    </div>
   </div>
-  {% endif %}
-
-  <a href="{% url 'article:article_list' %}" class="inline-block mt-6 text-blue-600 hover:underline">
-    ← Back to Article List
-  </a>
 </div>
+
+<script>
+// Smooth scrolling for navigation tabs
+document.querySelectorAll('#article-tabs nav a').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const targetId = this.getAttribute('href').substring(1);
+    const targetElement = document.getElementById(targetId);
+    targetElement.scrollIntoView({ behavior: 'smooth' });
+    
+    // Update active tab
+    document.querySelectorAll('#article-tabs nav a').forEach(a => {
+      a.classList.remove('border-blue-500', 'text-blue-600');
+      a.classList.add('border-transparent', 'text-gray-500');
+    });
+    this.classList.remove('border-transparent', 'text-gray-500');
+    this.classList.add('border-blue-500', 'text-blue-600');
+  });
+});
+</script>
 {% endblock %}

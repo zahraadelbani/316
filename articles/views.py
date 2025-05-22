@@ -387,7 +387,7 @@ def download_article(request, article_id):
 @login_required
 def add_note(request, article_id):
     article = get_object_or_404(Article, id=article_id)
-    if request.user.get_role() == "reviewer":
+    if request.user.get_role == "reviewer":
         return HttpResponseForbidden("reViewers are not allowed to perform this action.")
     if request.method == 'POST':
         form = NoteForm(request.POST)
