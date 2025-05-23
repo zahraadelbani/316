@@ -323,8 +323,8 @@ def add_article_file(request, article_id):
 def edit_article(request, article_id):
     article = get_object_or_404(Article, id=article_id)
 
-    # 🔒 Only the uploader or a superuser can edit
-    if request.user != article.uploaded_by and not request.user.is_superuser:
+    # 🔒 Only the uploader, a superuser, or an admin can edit
+    if request.user != article.uploaded_by and not request.user.is_superuser and request.user.get_role != "admin":
         return HttpResponseForbidden("You are not allowed to edit this article.")
 
     if request.method == 'POST':
@@ -344,25 +344,24 @@ def edit_article(request, article_id):
 def delete_article(request, article_id):
     article = get_object_or_404(Article, id=article_id)
 
-    # 🔒 Only the uploader or a superuser can delete
-    if request.user != article.uploaded_by and not request.user.is_superuser:
+    if request.user != article.uploaded_by and not request.user.is_superuser and request.user.get_role != "admin":
         return HttpResponseForbidden("You are not allowed to delete this article.")
 
     if request.method == 'POST':
         article.delete()
+        messages.success(request, f'"{article.title}" was deleted successfully.')
         return redirect('article:article_list')
 
-    return render(request, 'articles/delete_article.html', {
-        'article': article
-    })
+    # Never show a confirmation page now
+    return redirect('article:article_list')
 
 @login_required
 def delete_article_file(request, file_id):
     file = get_object_or_404(ArticleFile, id=file_id)
     article = file.article
 
-    # 🔐 Only the uploader of the article or a superuser can delete
-    if request.user != article.uploaded_by and not request.user.is_superuser:
+    # 🔐 Only the uploader of the article, a superuser, or an admin can delete
+    if request.user != article.uploaded_by and not request.user.is_superuser and request.user.get_role != "admin":
         return HttpResponseForbidden("You are not allowed to delete this file.")
 
     file.file.delete()  # Delete from media folder

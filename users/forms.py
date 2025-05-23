@@ -26,3 +26,13 @@ class CustomLoginForm(AuthenticationForm):
                 else:
                     self.add_error('username', 'No user found with this email.')
         return cleaned_data
+
+class EditProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['name', 'email', 'profile_picture']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm'}),
+            'email': forms.EmailInput(attrs={'class': 'appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm'}),
+            'profile_picture': forms.ClearableFileInput(attrs={'class': 'block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none'}),
+        }

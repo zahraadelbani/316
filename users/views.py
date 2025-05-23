@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from .forms import CustomSignupForm, CustomLoginForm
+from .forms import CustomSignupForm, CustomLoginForm, EditProfileForm
 from .models import User
 
 def register_view(request):
@@ -42,7 +42,7 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
-    return render(request, 'users/profile.html', {'user': request.user})
+    return render(request, 'users/profile.html')
 
 @login_required
 def change_user_role(request, user_id):
@@ -68,3 +68,17 @@ def list_users(request):
 
     users = User.objects.all().order_by("-date_joined")
     return render(request, "users/list_users.html", {"users": users})
+
+
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully.")
+            return redirect('users:profile')  # <- Redirect to profile page
+    else:
+        form = EditProfileForm(instance=request.user)
+    return render(request, 'users/edit_profile.html', {'form': form})
