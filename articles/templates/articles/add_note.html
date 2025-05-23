@@ -1,15 +1,68 @@
-{% block content %}
-  <div class="max-w-2xl mx-auto p-6 bg-white shadow rounded">
-    <h1 class="text-xl font-bold mb-4">📝 Add Note for "{{ article.title }}"</h1>
-    
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        Add Note
-      </button>
-    </form>
+{% extends "base.html" %}
+{% block title %}Add Note{% endblock %}
 
-    <a href="{% url 'article:article_detail' article.id %}" class="text-blue-600 underline mt-4 inline-block">← Back to Article</a>
+{% block content %}
+{% load static %}
+{% load tailwind_tags %}
+{% tailwind_css %}
+<link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+
+<div class="min-h-screen">
+  <div class="max-w-3xl mx-auto px-4 py-8">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+          </svg>
+          Add Note 
+        </h2>
+        <a href="{% url 'article:article_detail' article.id %}" 
+           class="text-gray-700 bg-gray-100 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 text-center border border-gray-200">
+          ← Back to Article
+        </a>
+      </div>
+
+      <!-- Form -->
+      <form method="post" class="space-y-6">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+          <ul class="list-disc pl-4">
+            {% for error in form.non_field_errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        <!-- Form Fields -->
+        <div class="space-y-4">
+          {% for field in form %}
+            <div>
+              <label for="{{ field.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                {{ field.label }}
+              </label>
+              {{ field }}
+              {% if field.errors %}
+                <div class="mt-1 text-sm text-red-600">
+                  {{ field.errors }}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex justify-end">
+          <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            Add Note
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
+</div>
 {% endblock %}
