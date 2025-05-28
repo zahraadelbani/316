@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'articles',
     'rest_framework',
     'rest_framework.authtoken',
+    'ai_tools',
 
     #tailwind 
     'tailwind',

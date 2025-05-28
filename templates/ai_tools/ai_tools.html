@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8 text-center">AI Research Tools</h1>
+
+    
+
+    <div class="grid md:grid-cols-2 gap-8">
+        <!-- Text Summarization Section -->
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-semibold mb-4">Text Summarization</h2>
+            <div class="mb-4">
+                <textarea id="text-input" rows="6" class="w-full p-2 border rounded-lg resize-none" placeholder="Paste your text here..."></textarea>
+            </div>
+            <button onclick="generateSummary()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors w-full">
+                Generate Summary
+            </button>
+            <div id="summary-result" class="mt-4 p-4 bg-gray-50 rounded-lg hidden">
+                <h3 class="font-semibold mb-2">Summary:</h3>
+                <p id="summary-text" class="text-gray-700"></p>
+            </div>
+            <div id="summary-error" class="mt-4 p-4 bg-red-50 text-red-700 rounded-lg hidden"></div>
+        </div>
+
+        <!-- Citation Section -->
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-semibold mb-4">Citation Search Engine</h2>
+            <div class="mb-4">
+                <textarea id="citation-input" rows="3" class="w-full p-2 border rounded-lg resize-none" placeholder="Enter paper title, authors, or keywords..."></textarea>
+            </div>
+            <button onclick="generateCitation()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors w-full">
+                Search
+            </button>
+            <div id="citation-result" class="mt-4 p-4 bg-gray-50 rounded-lg hidden">
+                <h3 class="font-semibold mb-2">APA Citation:</h3>
+                <p id="apa-citation" class="text-gray-700 mb-4"></p>
+                <h3 class="font-semibold mb-2">Additional Information:</h3>
+                <div id="citation-details" class="text-gray-700">
+                    <p id="paper-title" class="mb-1"></p>
+                    <p id="paper-authors" class="mb-1"></p>
+                    <p id="paper-venue" class="mb-1"></p>
+                    <p id="paper-year" class="mb-1"></p>
+                    <p id="paper-url" class="mb-1"></p>
+                    <p id="paper-abstract" class="mt-2 text-sm"></p>
+                </div>
+            </div>
+            <div id="citation-error" class="mt-4 p-4 bg-red-50 text-red-700 rounded-lg hidden"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function generateSummary() {
+        const textInput = document.getElementById('text-input').value.trim();
+        const resultDiv = document.getElementById('summary-result');
+        const errorDiv = document.getElementById('summary-error');
+        
+        if (!textInput) {
+            errorDiv.textContent = 'Please enter some text to summarize.';
+            errorDiv.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/ai-tools/generate-summary/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ text: textInput })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                document.getElementById('summary-text').textContent = data.summary;
+                resultDiv.classList.remove('hidden');
+                errorDiv.classList.add('hidden');
+            } else {
+                errorDiv.textContent = data.error || 'Failed to generate summary.';
+                errorDiv.classList.remove('hidden');
+                resultDiv.classList.add('hidden');
+            }
+        } catch (error) {
+            errorDiv.textContent = 'An error occurred while generating the summary.';
+            errorDiv.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
+        }
+    }
+    
+    async function generateCitation() {
+        const textInput = document.getElementById('citation-input').value.trim();
+        const resultDiv = document.getElementById('citation-result');
+        const errorDiv = document.getElementById('citation-error');
+        
+        if (!textInput) {
+            errorDiv.textContent = 'Please enter paper details to search.';
+            errorDiv.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/ai-tools/generate-citation/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ text: textInput })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                document.getElementById('apa-citation').textContent = data.citation.apa;
+                document.getElementById('paper-title').textContent = `Title: ${data.citation.title}`;
+                document.getElementById('paper-authors').textContent = `Authors: ${data.citation.authors}`;
+                document.getElementById('paper-venue').textContent = `Venue: ${data.citation.venue}`;
+                document.getElementById('paper-year').textContent = `Year: ${data.citation.year}`;
+                if (data.citation.url) {
+                    document.getElementById('paper-url').innerHTML = `URL: <a href="${data.citation.url}" target="_blank" class="text-blue-600 hover:underline">${data.citation.url}</a>`;
+                } else {
+                    document.getElementById('paper-url').textContent = '';
+                }
+                if (data.citation.abstract) {
+                    document.getElementById('paper-abstract').textContent = `Abstract: ${data.citation.abstract}`;
+                } else {
+                    document.getElementById('paper-abstract').textContent = '';
+                }
+                resultDiv.classList.remove('hidden');
+                errorDiv.classList.add('hidden');
+            } else {
+                errorDiv.textContent = data.error || 'Failed to generate citation.';
+                errorDiv.classList.remove('hidden');
+                resultDiv.classList.add('hidden');
+            }
+        } catch (error) {
+            errorDiv.textContent = 'An error occurred while generating the citation.';
+            errorDiv.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
+        }
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %} 
