@@ -18,12 +18,45 @@ class Article(models.Model):
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    keywords = models.CharField(max_length=300, blank=True)  # for search
+    keywords = models.CharField(max_length=300, blank=True)  
     summary = models.TextField(blank=True, null=True)
-
+    authors = models.CharField(
+        max_length=512,
+        blank=True,    # allow empty form submissions
+        default=''     # default empty string for existing rows
+    )
+    journal_conference = models.CharField(
+        max_length=256,
+        blank=True,
+        default=''
+    )
+    publication_year = models.PositiveSmallIntegerField(
+        null=True,     # allow null in the database
+        blank=True     # allow empty form submissions
+    )
+    doi = models.CharField(
+        max_length=128,
+        blank=True,
+        default=''
+    )
+    is_favorite = models.BooleanField(default=False)
+    is_read     = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
+    
+    @property
+    def apa_citation(self):
+        """
+        Returns a properly formatted APA‐style citation:
+          Authors (Year). Title. Journal/Conference.
+        """
+        authors = self.authors or "Unknown"
+        year    = self.publication_year or "n.d."
+        title   = self.title or ""
+        venue   = f"{self.journal_conference}." if self.journal_conference else ""
+        return f"{authors} ({year}). {title}. {venue}"
+    
 class ArticleFile(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='files')
     file = models.FileField(upload_to='articles/')

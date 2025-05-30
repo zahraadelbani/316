@@ -28,7 +28,10 @@ urlpatterns = [
     path('articles/<int:article_id>/notes/add/', add_note, name='add_note'),
     path('notes/<int:note_id>/edit/', edit_note, name='edit_note'),
     path('notes/<int:note_id>/delete/', delete_note, name='delete_note'),
- 
+    path('articles/<int:article_id>/toggle_favorite/',
+         views.toggle_favorite, name='toggle_favorite'),
+    path('articles/<int:article_id>/toggle_read/',
+         views.toggle_read,     name='toggle_read'),
     
 
 

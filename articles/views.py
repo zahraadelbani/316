@@ -500,4 +500,28 @@ def update_summary_view(request, article_id):
     messages.success(request, "Summary updated successfully.")
     return redirect("article:article_detail", article_id=article.id)
 
+# views.py
+
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+
+@login_required
+@require_POST
+def toggle_favorite(request, article_id):
+    article = get_object_or_404(Article, id=article_id)
+    if not user_has_article_access(request.user, article):
+        return JsonResponse({'error': 'forbidden'}, status=403)
+    article.is_favorite = not article.is_favorite
+    article.save()
+    return JsonResponse({'is_favorite': article.is_favorite})
+
+@login_required
+@require_POST
+def toggle_read(request, article_id):
+    article = get_object_or_404(Article, id=article_id)
+    if not user_has_article_access(request.user, article):
+        return JsonResponse({'error': 'forbidden'}, status=403)
+    article.is_read = not article.is_read
+    article.save()
+    return JsonResponse({'is_read': article.is_read})
 

@@ -108,27 +108,38 @@
         <div id="overview" class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
           <h2 class="text-xl font-semibold text-gray-900 mb-4">Overview</h2>
           
-          {% if article.summary %}
-          <div class="mb-6">
-            <h3 class="text-lg font-medium text-gray-900 mb-2">Summary</h3>
-            <p class="text-gray-700">{{ article.summary }}</p>
-          </div>
+          {# Show static summary only to non-owners #}
+          {% if article.summary and user != article.uploaded_by and not user.is_superuser %}
+            <div class="mb-6">
+              <h3 class="text-lg font-medium text-gray-900 mb-2">Summary</h3>
+              <p class="text-gray-700">{{ article.summary }}</p>
+            </div>
           {% endif %}
-
+        
           {% if user == article.uploaded_by or user.is_superuser %}
-          <div>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">Update Summary</h3>
-            <form method="post" action="{% url 'article:update_summary' article.id %}" class="space-y-4">
-              {% csrf_token %}
-              <textarea name="summary" rows="4" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">{{ article.summary }}</textarea>
-              <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                Update Summary
-              </button>
-            </form>
-          </div>
+            <div>
+              <h3 class="text-lg font-medium text-gray-900 mb-2">
+                {% if article.summary %}Edit Summary{% else %}Add Summary{% endif %}
+              </h3>
+              <form method="post" action="{% url 'article:update_summary' article.id %}" class="space-y-4">
+                {% csrf_token %}
+                <textarea
+                  name="summary"
+                  rows="4"
+                  class="w-full p-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Enter summary here…"
+                >{{ article.summary }}</textarea>
+                <button
+                  type="submit"
+                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                >
+                  {% if article.summary %}Update Summary{% else %}Save Summary{% endif %}
+                </button>
+              </form>
+            </div>
           {% endif %}
         </div>
-
+        
         <!-- Files Section -->
         <div id="files" class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
           <h2 class="text-xl font-semibold text-gray-900 mb-4">Files</h2>

@@ -7,7 +7,7 @@
 <div class="min-h-screen">
   <div class="max-w-7xl mx-auto px-4 py-8">
     <!-- Citation Export Options -->
-    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6">
+    <!-- <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6">
       <h2 class="text-xl font-semibold mb-4 text-gray-900">Export Citations</h2>
       <div class="flex flex-wrap gap-4">
         <a href="{% url 'article:export_citations' %}?format=APA" target="_blank"
@@ -21,7 +21,7 @@
         <a href="{% url 'article:export_ris_file' %}" 
            class="text-gray-700 bg-orange-100 hover:bg-orange-200 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-4 py-2 text-center border border-orange-200">RIS</a>
       </div>
-    </div>
+    </div> -->
 
     <!-- Article List with Search -->
     <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
@@ -97,7 +97,29 @@
                     </span>
                   {% endif %}
                 </div>
-
+                <div class="mb-4 flex items-center gap-4">
+                  <!-- Favorite -->
+                  <button type="button"
+                          class="toggle-favorite text-2xl"
+                          data-article-id="{{ article.id }}">
+                    {% if article.is_favorite %}⭐{% else %}☆{% endif %}
+                  </button>
+                
+                  <!-- Read/Unread -->
+                  <button type="button"
+                          class="toggle-read text-2xl"
+                          data-article-id="{{ article.id }}">
+                    {% if article.is_read %}📖{% else %}✓{% endif %}
+                  </button>
+                
+                  <!-- Copy APA Citation -->
+                  <button type="button"
+                          class="copy-citation text-sm px-2 py-1 bg-gray-100 rounded"
+                          data-citation-text="{{ article.apa_citation|escapejs }}">
+                    Copy APA
+                  </button>
+                </div>
+                
                 <!-- Project Info -->
                 <div class="mb-4">
                   <div class="text-sm text-gray-600">
@@ -202,4 +224,58 @@
     </div>
   </div>
 </div>
+<script>
+  // static/js/article_actions.js
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Helper to send POST with CSRF
+  function postJSON(url, data, cb) {
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(cb)
+    .catch(console.error);
+  }
+
+  // Toggle Favorite
+  document.querySelectorAll('.toggle-favorite').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const id = btn.dataset.articleId;
+      postJSON(`/articles/${id}/toggle_favorite/`, {}, resp => {
+        if (resp.is_favorite) btn.textContent = '⭐';
+        else                     btn.textContent = '☆';
+      });
+    });
+  });
+
+  // Toggle Read/Unread
+  document.querySelectorAll('.toggle-read').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const id = btn.dataset.articleId;
+      postJSON(`/articles/${id}/toggle_read/`, {}, resp => {
+        btn.textContent = resp.is_read ? '📖' : '✓';
+      });
+    });
+  });
+
+  // Copy APA citation
+  document.querySelectorAll('.copy-citation').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.dataset.citationText;
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          setTimeout(() => btn.textContent = 'Copy APA', 1500);
+        });
+    });
+  });
+});
+
+</script>
 {% endblock %}

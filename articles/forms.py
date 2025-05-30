@@ -19,10 +19,38 @@ class BibTeXUploadForm(forms.Form):
 class ArticleUploadForm(forms.ModelForm):
     class Meta:
         model = Article
-        fields = ['title', 'abstract', 'keywords', 'project']
+        fields = [
+            'title',
+            'authors',
+            'journal_conference',
+            'publication_year',
+            'doi',
+            'abstract',
+            'keywords',
+            'project',
+        ]
         widgets = {
             'title': forms.TextInput(attrs={'class': 'w-full p-2 border rounded'}),
-            'abstract': forms.Textarea(attrs={'rows': 4, 'class': 'w-full p-2 border rounded'}),
+            'authors': forms.TextInput(attrs={
+                'class': 'w-full p-2 border rounded',
+                'placeholder': 'e.g. Alice Smith; Bob Jones'
+            }),
+            'journal_conference': forms.TextInput(attrs={
+                'class': 'w-full p-2 border rounded',
+                'placeholder': 'Journal or Conference Name'
+            }),
+            'publication_year': forms.NumberInput(attrs={
+                'class': 'w-full p-2 border rounded',
+                'min': 1900, 'max': 2100
+            }),
+            'doi': forms.TextInput(attrs={
+                'class': 'w-full p-2 border rounded',
+                'placeholder': '10.xxxx/xxxxx'
+            }),
+            'abstract': forms.Textarea(attrs={
+                'rows': 4,
+                'class': 'w-full p-2 border rounded'
+            }),
             'keywords': forms.TextInput(attrs={'class': 'w-full p-2 border rounded'}),
             'project': forms.Select(attrs={'class': 'w-full p-2 border rounded'}),
         }
