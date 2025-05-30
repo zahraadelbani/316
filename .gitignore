@@ -49,3 +49,7 @@ wheels/
 
 # Environment variables
 .env
+
+# Django migrations
+**/migrations/
+!**/migrations/__init__.py
