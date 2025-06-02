@@ -495,8 +495,9 @@ def update_summary_view(request, article_id):
         return HttpResponseForbidden("You are not allowed to edit this summary.")
 
     summary = request.POST.get("summary", "").strip()
-    article.summary = summary
-    article.save()
+    # Only update the summary field using update()
+    Article.objects.filter(id=article.id).update(summary=summary)
+    
     messages.success(request, "Summary updated successfully.")
     return redirect("article:article_detail", article_id=article.id)
 

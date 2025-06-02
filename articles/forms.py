@@ -63,16 +63,17 @@ class NoteForm(forms.ModelForm):
             'content': forms.Textarea(attrs={
                 'rows': 3,
                 'placeholder': 'Write your note here...',
-                'class': 'w-full p-2 border rounded',
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
             }),
             'page_number': forms.NumberInput(attrs={
                 'placeholder': 'Page # (optional)',
-                'class': 'w-full p-2 border rounded',
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
             }),
             'file': forms.Select(attrs={
-                'class': 'w-full p-2 border rounded',
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
             }),
         }
+
 class CitationForm(forms.ModelForm):
     class Meta:
         model = Reference

@@ -7,19 +7,29 @@
 {% tailwind_css %}
 <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
 
-<div class="min-h-screen">
+<style>
+  /* Add dark mode styles for form inputs */
+  .dark input[type="text"],
+  .dark input[type="number"],
+  .dark textarea,
+  .dark select {
+    @apply bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500;
+  }
+</style>
+
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
   <div class="max-w-3xl mx-auto px-4 py-8">
-    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4 sm:p-6">
       <!-- Header -->
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0 mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <svg class="w-6 h-6 text-blue-600 dark:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
           </svg>
           Upload Article
         </h2>
         <a href="{% url 'article:article_list' %}" 
-           class="text-gray-700 bg-gray-100 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 text-center border border-gray-200">
+           class="w-full sm:w-auto text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-600 font-medium rounded-lg text-sm px-4 py-2 text-center border border-gray-200 dark:border-gray-600">
           ← Back to Articles
         </a>
       </div>
@@ -28,7 +38,7 @@
       <form method="post" enctype="multipart/form-data" class="space-y-6">
         {% csrf_token %}
         {% if form.non_field_errors %}
-        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
+        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
           <ul class="list-disc pl-4">
             {% for error in form.non_field_errors %}
               <li>{{ error }}</li>
@@ -40,60 +50,80 @@
         <!-- Metadata Fields -->
         <div class="grid grid-cols-1 gap-4">
           <div>
-            <label for="id_title" class="block text-sm font-medium text-gray-900">Title</label>
-            {{ form.title }}
-            {% if form.title.errors %}<div class="mt-1 text-sm text-red-600">{{ form.title.errors }}</div>{% endif %}
+            <label for="id_title" class="block text-sm font-medium text-gray-900 dark:text-white">Title</label>
+            <input type="text" name="title" id="id_title" value="{{ form.title.value|default:'' }}"
+                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                   placeholder="Enter article title">
+            {% if form.title.errors %}<div class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.title.errors }}</div>{% endif %}
           </div>
           <div>
-            <label for="id_authors" class="block text-sm font-medium text-gray-900">Authors</label>
-            {{ form.authors }}
-            {% if form.authors.errors %}<div class="mt-1 text-sm text-red-600">{{ form.authors.errors }}</div>{% endif %}
+            <label for="id_authors" class="block text-sm font-medium text-gray-900 dark:text-white">Authors</label>
+            <input type="text" name="authors" id="id_authors" value="{{ form.authors.value|default:'' }}"
+                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                   placeholder="Enter authors">
+            {% if form.authors.errors %}<div class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.authors.errors }}</div>{% endif %}
           </div>
           <div>
-            <label for="id_journal_conference" class="block text-sm font-medium text-gray-900">Journal / Conference</label>
-            {{ form.journal_conference }}
-            {% if form.journal_conference.errors %}<div class="mt-1 text-sm text-red-600">{{ form.journal_conference.errors }}</div>{% endif %}
+            <label for="id_journal_conference" class="block text-sm font-medium text-gray-900 dark:text-white">Journal / Conference</label>
+            <input type="text" name="journal_conference" id="id_journal_conference" value="{{ form.journal_conference.value|default:'' }}"
+                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                   placeholder="Enter journal or conference name">
+            {% if form.journal_conference.errors %}<div class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.journal_conference.errors }}</div>{% endif %}
           </div>
           <div>
-            <label for="id_publication_year" class="block text-sm font-medium text-gray-900">Publication Year</label>
-            {{ form.publication_year }}
-            {% if form.publication_year.errors %}<div class="mt-1 text-sm text-red-600">{{ form.publication_year.errors }}</div>{% endif %}
+            <label for="id_publication_year" class="block text-sm font-medium text-gray-900 dark:text-white">Publication Year</label>
+            <input type="number" name="publication_year" id="id_publication_year" value="{{ form.publication_year.value|default:'' }}"
+                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                   placeholder="Enter publication year">
+            {% if form.publication_year.errors %}<div class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.publication_year.errors }}</div>{% endif %}
           </div>
           <div>
-            <label for="id_doi" class="block text-sm font-medium text-gray-900">DOI</label>
-            {{ form.doi }}
-            {% if form.doi.errors %}<div class="mt-1 text-sm text-red-600">{{ form.doi.errors }}</div>{% endif %}
+            <label for="id_doi" class="block text-sm font-medium text-gray-900 dark:text-white">DOI</label>
+            <input type="text" name="doi" id="id_doi" value="{{ form.doi.value|default:'' }}"
+                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                   placeholder="Enter DOI">
+            {% if form.doi.errors %}<div class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.doi.errors }}</div>{% endif %}
           </div>
           <div>
-            <label for="id_abstract" class="block text-sm font-medium text-gray-900">Abstract</label>
-            {{ form.abstract }}
-            {% if form.abstract.errors %}<div class="mt-1 text-sm text-red-600">{{ form.abstract.errors }}</div>{% endif %}
+            <label for="id_abstract" class="block text-sm font-medium text-gray-900 dark:text-white">Abstract</label>
+            <textarea name="abstract" id="id_abstract" rows="4"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Enter article abstract">{{ form.abstract.value|default:'' }}</textarea>
+            {% if form.abstract.errors %}<div class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.abstract.errors }}</div>{% endif %}
           </div>
           <div>
-            <label for="id_keywords" class="block text-sm font-medium text-gray-900">Keywords</label>
-            {{ form.keywords }}
-            {% if form.keywords.errors %}<div class="mt-1 text-sm text-red-600">{{ form.keywords.errors }}</div>{% endif %}
+            <label for="id_keywords" class="block text-sm font-medium text-gray-900 dark:text-white">Keywords</label>
+            <input type="text" name="keywords" id="id_keywords" value="{{ form.keywords.value|default:'' }}"
+                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                   placeholder="Enter keywords (comma-separated)">
+            {% if form.keywords.errors %}<div class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.keywords.errors }}</div>{% endif %}
           </div>
           <div>
-            <label for="id_project" class="block text-sm font-medium text-gray-900">Project</label>
-            {{ form.project }}
-            {% if form.project.errors %}<div class="mt-1 text-sm text-red-600">{{ form.project.errors }}</div>{% endif %}
+            <label for="id_project" class="block text-sm font-medium text-gray-900 dark:text-white">Project</label>
+            <select name="project" id="id_project"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+              <option value="">Select a project</option>
+              {% for project in form.project.field.queryset %}
+                <option value="{{ project.id }}" {% if form.project.value == project.id %}selected{% endif %}>{{ project.name }}</option>
+              {% endfor %}
+            </select>
+            {% if form.project.errors %}<div class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.project.errors }}</div>{% endif %}
           </div>
         </div>
 
         <!-- File Upload -->
         <div>
-          <label for="id_file" class="block mb-2 text-sm font-medium text-gray-900">Upload Files</label>
+          <label for="id_file" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Upload Files</label>
           <div class="flex items-center justify-center w-full">
-            <label for="id_file" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+            <label for="id_file" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600">
               <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" fill="none" viewBox="0 0 20 16">
+                <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none" viewBox="0 0 20 16">
                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                 </svg>
-                <p class="mb-2 text-sm text-gray-500">
+                <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
                   <span class="font-semibold">Click to upload</span> or drag and drop
                 </p>
-                <p class="text-xs text-gray-500">PDF, DOCX, or other document files</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">PDF, DOCX, or other document files</p>
               </div>
               <input type="file" name="file" id="id_file" multiple required class="hidden" onchange="updateFileList(this)" />
             </label>
@@ -103,7 +133,7 @@
 
         <!-- Submit Button -->
         <div class="flex justify-end">
-          <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
+          <button type="submit" class="w-full sm:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
             Upload Article
           </button>
         </div>
@@ -118,18 +148,18 @@ function updateFileList(input) {
   fileList.innerHTML = '';
   if (input.files.length > 0) {
     const listContainer = document.createElement('div');
-    listContainer.className = 'bg-gray-50 rounded-lg p-4';
+    listContainer.className = 'bg-gray-50 dark:bg-gray-700 rounded-lg p-4';
     const title = document.createElement('h3');
-    title.className = 'text-sm font-medium text-gray-900 mb-2';
+    title.className = 'text-sm font-medium text-gray-900 dark:text-white mb-2';
     title.textContent = 'Selected Files:';
     listContainer.appendChild(title);
     const ul = document.createElement('ul');
     ul.className = 'space-y-2';
     Array.from(input.files).forEach(file => {
       const li = document.createElement('li');
-      li.className = 'flex items-center text-sm text-gray-600';
+      li.className = 'flex items-center text-sm text-gray-600 dark:text-gray-300';
       const icon = document.createElement('svg');
-      icon.className = 'w-4 h-4 mr-2 text-gray-500';
+      icon.className = 'w-4 h-4 mr-2 text-gray-500 dark:text-gray-400';
       icon.setAttribute('fill', 'none');
       icon.setAttribute('stroke', 'currentColor');
       icon.setAttribute('viewBox', '0 0 24 24');
@@ -144,6 +174,7 @@ function updateFileList(input) {
     fileList.appendChild(listContainer);
   }
 }
+
 function formatFileSize(bytes) {
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
