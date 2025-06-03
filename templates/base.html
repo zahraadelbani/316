@@ -6,11 +6,16 @@
 <html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Research Article Management{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Flowbite CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
     {% tailwind_css %}
+    <style>
+        body {
+            padding-top: 80px; /* Add padding to body */
+        }
+    </style>
     <script>
         // On page load or when changing themes, best to add inline in `head` to avoid FOUC
         if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -37,39 +42,42 @@
 
   </div>
 <!-- Flowbite Navbar with User Dropdown -->
-<nav class="fixed top-0 left-0 right-0 z-50 bg-white/60 backdrop-blur-lg dark:bg-gray-900/70">
-  <div class="max-w-screen-xl flex items-center justify-between mx-auto p-4">
-    <a href="/" class="flex items-center">
-      <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Article Manager</span>
+<nav class="fixed top-0 left-0 right-0 z-50 bg-white/30 backdrop-blur-xl dark:bg-gray-900 dark:border-gray-700/50">
+  <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+    <a href="/" class="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+      <svg class="w-8 h-8 text-blue-600 dark:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+      </svg>
+      <span class="self-center text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Article Management System</span>
     </a>
     
-    <div class="flex items-center gap-8">
-      <div class="hidden md:block" id="navbar-user">
-        <ul class="flex items-center gap-8">
+    <div class="flex items-center gap-4">
+      <div class="hidden md:flex items-center gap-6" id="navbar-user">
+        <ul class="flex items-center gap-6">
           {% if user.is_authenticated %}
             <li>
-              <a href="{% url 'article:article_list' %}" class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Articles</a>
+              <a href="{% url 'article:article_list' %}" class="block py-2 px-3 text-gray-700 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-400 font-medium transition-colors duration-200">Articles</a>
             </li>
             <li>
-              <a href="{% url 'ai_tools:ai_tools_page' %}" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">AI Tools</a>
+              <a href="{% url 'ai_tools:ai_tools_page' %}" class="block py-2 px-3 text-gray-700 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-400 font-medium transition-colors duration-200">AI Tools</a>
             </li>
             {% if user.is_superuser %}
               <li>
-                <a href="{% url 'users:list_users' %}" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Users</a>
+                <a href="{% url 'users:list_users' %}" class="block py-2 px-3 text-gray-700 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-400 font-medium transition-colors duration-200">Users</a>
               </li>
             {% endif %}
             <li>
-              <a href="{% url 'users:profile' %}" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Profile</a>
+              <a href="{% url 'users:profile' %}" class="block py-2 px-3 text-gray-700 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-400 font-medium transition-colors duration-200">Profile</a>
             </li>
           {% else %}
             <li>
-              <a href="/" class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Home</a>
+              <a href="/" class="block py-2 px-3 text-gray-700 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-400 font-medium transition-colors duration-200">Home</a>
             </li>
             <li>
-              <a href="{% url 'users:login' %}" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Login</a>
+              <a href="{% url 'users:login' %}" class="block py-2 px-3 text-gray-700 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-400 font-medium transition-colors duration-200">Login</a>
             </li>
             <li>
-              <a href="{% url 'users:register' %}" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Register</a>
+              <a href="{% url 'users:register' %}" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 transition-colors duration-200">Register</a>
             </li>
           {% endif %}
         </ul>
@@ -77,7 +85,7 @@
 
       <div class="flex items-center gap-4">
         <!-- Dark mode toggle button -->
-        <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+        <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 transition-colors duration-200">
             <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
             </svg>
@@ -87,10 +95,10 @@
         </button>
 
         {% if user.is_authenticated %}
-          <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+          <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 transition-transform hover:scale-105" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
             <span class="sr-only">Open user menu</span>
             {% if user.profile_picture %}
-              <img class="w-8 h-8 rounded-full object-cover border border-white shadow"
+              <img class="w-8 h-8 rounded-full object-cover border border-white dark:border-gray-700"
                   src="{{ user.profile_picture.url }}"
                   alt="Profile Picture">
             {% else %}
@@ -100,37 +108,31 @@
             {% endif %}
           </button>
           <!-- Dropdown menu -->
-          <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
+          <div class="z-50 hidden my-4 text-base list-none bg-white/95 backdrop-blur-md divide-y divide-gray-100 rounded-lg shadow-lg border border-gray-200 dark:bg-gray-800 bg-white " id="user-dropdown">
             <div class="px-4 py-3">
-              <span class="block text-sm text-gray-900 dark:text-white">{{ user.name|default:user.email }}</span>
-              <span class="block text-sm text-gray-500 truncate dark:text-gray-400">{{ user.email }}</span>
+              <span class="block text-sm text-gray-900 dark:text-white font-medium">{{ user.name|default:user.email }}</span>
+              <span class="block text-sm text-gray-500 truncate dark:text-gray-300">{{ user.email }}</span>
             </div>
             <ul class="py-2" aria-labelledby="user-menu-button">
               {% if user.is_superuser %}
               <li>
-                <a href="{% url 'users:list_users' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">User Management</a>
+                <a href="{% url 'users:list_users' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400 transition-colors duration-200">User Management</a>
               </li>
               {% endif %}
-              <li>
-                <a href="{% url 'article:article_list' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Articles</a>
+           
+                <a href="{% url 'users:profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400 transition-colors duration-200">Profile</a>
               </li>
               <li>
-                <a href="{% url 'ai_tools:ai_tools_page' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">AI Tools</a>
-              </li>
-              <li>
-                <a href="{% url 'users:profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Profile</a>
-              </li>
-              <li>
-                <button type="button" data-modal-target="signout-modal" data-modal-toggle="signout-modal" class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</button>
+                <button type="button" data-modal-target="signout-modal" data-modal-toggle="signout-modal" class="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-700 dark:hover:text-red-300 transition-colors duration-200">Sign out</button>
               </li>
             </ul>
           </div>
         {% else %}
-          <a href="{% url 'users:login' %}" class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Login</a>
-          <a href="{% url 'users:register' %}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Register</a>
+          <a href="{% url 'users:login' %}" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 transition-colors duration-200">Login</a>
+          <a href="{% url 'users:register' %}" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 transition-colors duration-200">Register</a>
         {% endif %}
         
-        <button data-collapse-toggle="navbar-user" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-user" aria-expanded="false">
+        <button data-collapse-toggle="navbar-user" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 transition-colors duration-200" aria-controls="navbar-user" aria-expanded="false">
           <span class="sr-only">Open main menu</span>
           <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
@@ -142,7 +144,7 @@
 </nav>
 
 <!-- Main Content - Adjusted for navbar -->
-<main class="mt-10" >
+<main class="pt-2 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
     {% block content %}{% endblock %}
 </main>
 

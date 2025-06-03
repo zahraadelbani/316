@@ -9,17 +9,17 @@
 
 <div class="min-h-screen">
   <div class="max-w-3xl mx-auto px-4 py-8">
-    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-6">
       <!-- Header -->
       <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <svg class="w-6 h-6 text-blue-600 dark:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
           </svg>
           Import BibTeX
         </h2>
         <a href="{% url 'article:article_list' %}" 
-           class="text-gray-700 bg-gray-100 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 text-center border border-gray-200">
+           class="text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-600 font-medium rounded-lg text-sm px-4 py-2 text-center border border-gray-200 dark:border-gray-600">
           ← Back to Articles
         </a>
       </div>
@@ -43,9 +43,17 @@
           <label for="{{ form.article.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
             Associate With Article
           </label>
-          {{ form.article }}
+          <select name="{{ form.article.name }}" id="{{ form.article.id_for_label }}" 
+                  class="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <option value="">Select an article...</option>
+            {% for article in form.article.field.queryset %}
+              <option value="{{ article.id }}" {% if form.article.value == article.id %}selected{% endif %}>
+                {{ article.title }}
+              </option>
+            {% endfor %}
+          </select>
           {% if form.article.errors %}
-            <div class="mt-1 text-sm text-red-600">
+            <div class="mt-1 text-sm text-red-600 dark:text-red-400">
               {{ form.article.errors }}
             </div>
           {% endif %}
@@ -57,7 +65,7 @@
             BibTeX File (.bib)
           </label>
           <div class="flex items-center justify-center w-full">
-            <label for="{{ form.bib_file.id_for_label }}" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+            <label for="{{ form.bib_file.id_for_label }}" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:border-gray-500">
               <div class="flex flex-col items-center justify-center pt-5 pb-6">
                 <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
@@ -75,7 +83,7 @@
             <!-- Files will be listed here -->
           </div>
           {% if form.bib_file.errors %}
-            <div class="mt-1 text-sm text-red-600">
+            <div class="mt-1 text-sm text-red-600 dark:text-red-400">
               {{ form.bib_file.errors }}
             </div>
           {% endif %}
@@ -87,7 +95,7 @@
             Citation Style
           </label>
           <select name="citation_style" id="citation_style" 
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  class="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:focus:ring-blue-500 dark:focus:border-blue-500">
             <option value="APA">APA</option>
             <option value="MLA">MLA</option>
             <option value="Chicago">Chicago</option>
@@ -124,10 +132,10 @@ function updateFileList(input) {
   
   if (input.files.length > 0) {
     const listContainer = document.createElement('div');
-    listContainer.className = 'bg-gray-50 rounded-lg p-4';
+    listContainer.className = 'bg-gray-50 dark:bg-gray-700 rounded-lg p-4';
     
     const title = document.createElement('h3');
-    title.className = 'text-sm font-medium text-gray-900 mb-2';
+    title.className = 'text-sm font-medium text-gray-900 dark:text-white mb-2';
     title.textContent = 'Selected Files:';
     listContainer.appendChild(title);
     
@@ -136,11 +144,11 @@ function updateFileList(input) {
     
     Array.from(input.files).forEach(file => {
       const li = document.createElement('li');
-      li.className = 'flex items-center text-sm text-gray-600';
+      li.className = 'flex items-center text-sm text-gray-600 dark:text-gray-300';
       
       // File icon
       const icon = document.createElement('svg');
-      icon.className = 'w-4 h-4 mr-2 text-gray-500';
+      icon.className = 'w-4 h-4 mr-2 text-gray-500 dark:text-gray-400';
       icon.setAttribute('fill', 'none');
       icon.setAttribute('stroke', 'currentColor');
       icon.setAttribute('viewBox', '0 0 24 24');

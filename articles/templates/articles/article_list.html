@@ -4,8 +4,8 @@
 {% block content %}
 {% load static %}
 
-<div class="min-h-screen w-full">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+<div class="min-h-screen w-full mt-16">
+  <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-2 sm:py-6 lg:py-8">
     <!-- Citation Export Options -->
     <!-- <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6">
       <h2 class="text-xl font-semibold mb-4 text-gray-900">Export Citations</h2>
@@ -24,21 +24,21 @@
     </div> -->
 
     <!-- Article List with Search -->
-    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-none sm:rounded-lg shadow-sm p-4 sm:p-6">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Articles</h2>
-        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-          <div class="text-sm text-gray-500 dark:text-gray-400">
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-none sm:rounded-lg md:rounded-lg lg:rounded-lg  shadow-sm p-3 sm:p-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4 mb-3 sm:mb-6">
+        <h2 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">Articles</h2>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
+          <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
             Total: {{ articles|length }} articles
           </div>
           {% if user.get_role != "reviewer" %}
-          <div class="flex flex-wrap gap-2">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:w-auto">
             <a href="{% url 'article:import_bibtex' %}" 
-               class="text-gray-700 dark:text-gray-200 bg-indigo-100 dark:bg-indigo-900 hover:bg-indigo-200 dark:hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:focus:ring-indigo-700 font-medium rounded-lg text-xs sm:text-sm px-3 sm:px-4 py-2 text-center border border-indigo-200 dark:border-indigo-700">
+               class="text-gray-700 dark:text-gray-200 bg-indigo-100 dark:bg-indigo-900 hover:bg-indigo-200 dark:hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:focus:ring-indigo-700 font-medium rounded-lg text-xs sm:px-4 py-1.5 sm:py-2 text-center border border-indigo-200 dark:border-indigo-700 flex-1 sm:flex-none">
               Import BibTeX
             </a>
             <a href="{% url 'article:upload_article' %}" 
-               class="text-gray-700 dark:text-black bg-teal-100 dark:bg-teal-900 hover:bg-teal-200 dark:hover:bg-teal-800 focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-700 font-medium rounded-lg text-xs sm:text-sm px-3 sm:px-4 py-2 text-center border border-teal-200 dark:border-teal-700">
+               class="text-gray-700 dark:text-black bg-teal-100 dark:bg-teal-900 hover:bg-teal-200 dark:hover:bg-teal-800 focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-700 font-medium rounded-lg text-xs px-2 sm:px-4 py-1.5 sm:py-2 text-center border border-teal-200 dark:border-teal-700 flex-1 sm:flex-none">
               Upload New Article
             </a>
           </div>
@@ -47,22 +47,22 @@
       </div>
 
       <!-- Search and Filter -->
-      <div class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
-        <form method="GET" class="flex flex-col md:flex-row items-end gap-3 sm:gap-4">
+      <div class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-2 sm:p-4 mb-3 sm:mb-6">
+        <form method="GET" class="flex flex-col md:flex-row items-end gap-2 sm:gap-4">
           <div class="w-full md:w-1/2">
-            <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Search Articles</label>
+            <label for="search" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Search Articles</label>
             <input
               type="text"
               name="q"
               id="search"
               value="{{ query }}"
               placeholder="Search by title, author, or keywords..."
-              class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 sm:p-2.5"
+              class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-xs sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
             />
           </div>
           <div class="w-full md:w-1/3">
-            <label for="project" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Filter by Project</label>
-            <select name="project" id="project" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 sm:p-2.5">
+            <label for="project" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Filter by Project</label>
+            <select name="project" id="project" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-xs sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2">
               <option value="">All Projects</option>
               {% for project in projects %}
                 <option value="{{ project.id }}" {% if project.id == selected_project %}selected{% endif %}>
@@ -72,7 +72,7 @@
             </select>
           </div>
           <div class="w-full md:w-auto">
-            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-4 py-2 sm:py-2.5 text-center w-full md:w-auto">
+            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-xs sm:text-sm px-3 py-2 text-center w-full md:w-auto">
               Filter
             </button>
           </div>
@@ -80,13 +80,13 @@
       </div>
 
       {% if articles %}
-        <div class="grid grid-cols-1 min-[550px]:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div class="grid grid-cols-1 min-[500px]:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           {% for article in articles %}
-            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-none sm:rounded-lg p-4 sm:p-5 hover:shadow-lg transition-all duration-200">
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-none sm:rounded-lg p-3 sm:p-5 hover:shadow-lg transition-all duration-200">
               <div class="flex flex-col h-full">
                 <!-- Title and Status -->
-                <div class="mb-3 sm:mb-4">
-                  <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">{{ article.title }}</h3>
+                <div class="mb-2 sm:mb-4">
+                  <h3 class="text-sm sm:text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">{{ article.title }}</h3>
                   {% if article.summary %}
                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
                       Summary Available
@@ -97,32 +97,34 @@
                     </span>
                   {% endif %}
                 </div>
-                <div class="mb-3 sm:mb-4 flex items-center gap-3 sm:gap-4">
+                <div class="mb-2 sm:mb-4 flex items-center gap-2 sm:gap-4">
+                  {% if user.get_role != "reviewer" %}
                   <!-- Favorite -->
                   <button type="button"
-                          class="toggle-favorite text-xl sm:text-2xl text-yellow-500 dark:text-yellow-400"
+                          class="toggle-favorite text-lg sm:text-2xl text-yellow-500 dark:text-yellow-400"
                           data-article-id="{{ article.id }}">
                     {% if article.is_favorite %}⭐{% else %}☆{% endif %}
                   </button>
                 
                   <!-- Read/Unread -->
                   <button type="button"
-                          class="toggle-read text-xl sm:text-2xl text-blue-500 dark:text-blue-400"
+                          class="toggle-read text-lg sm:text-2xl text-blue-500 dark:text-blue-400"
                           data-article-id="{{ article.id }}">
                     {% if article.is_read %}📖{% else %}✓{% endif %}
                   </button>
+                  {% endif %}
                 
                   <!-- Copy APA Citation -->
                   <button type="button"
-                          class="copy-citation text-xs sm:text-sm px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-gray-700 dark:text-gray-200"
+                          class="copy-citation text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-gray-700 dark:text-gray-200"
                           data-citation-text="{{ article.apa_citation|escapejs }}">
                     Copy APA
                   </button>
                 </div>
                 
                 <!-- Project Info -->
-                <div class="mb-3 sm:mb-4">
-                  <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                <div class="mb-2 sm:mb-4">
+                  <div class="text-xs text-gray-600 dark:text-gray-300">
                     <span class="font-medium">Project:</span>
                     {% if article.project %}
                       <span class="text-blue-600 dark:text-blue-400">{{ article.project.name }}</span>
@@ -133,7 +135,7 @@
                 </div>
 
                 <!-- Metadata -->
-                <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-3 sm:mb-4">
+                <div class="text-xs text-gray-500 dark:text-gray-400 mb-2 sm:mb-4">
                   <div class="flex items-center gap-1 mb-1">
                     <span class="font-medium">Uploaded by:</span>
                     <span class="text-gray-700 dark:text-gray-300">{{ article.uploaded_by.name|default:article.uploaded_by.email }}</span>
@@ -145,12 +147,12 @@
                 </div>
 
                 <!-- Actions -->
-                <div class="mt-auto pt-3 sm:pt-4 border-t border-gray-100 dark:border-gray-700">
+                <div class="mt-auto pt-2 sm:pt-4 border-t border-gray-100 dark:border-gray-700">
                   <div class="flex flex-wrap gap-2">
                     {% if article.uploaded_by == user or user.is_superuser or user.get_role == "admin" %}
                       <a href="{% url 'article:edit_article' article.id %}" 
-                         class="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-200 bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-700 rounded-lg border border-blue-200 dark:border-blue-700">
-                        <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         class="inline-flex items-center px-2 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-200 bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-700 rounded-lg border border-blue-200 dark:border-blue-700 flex-1 sm:flex-none justify-center">
+                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                         </svg>
                         Edit
@@ -158,16 +160,16 @@
                       <button type="button" 
                          data-modal-target="delete-modal-{{ article.id }}" 
                          data-modal-toggle="delete-modal-{{ article.id }}"
-                         class="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-200 bg-red-100 dark:bg-red-900 hover:bg-red-200 dark:hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-700 rounded-lg border border-red-200 dark:border-red-700">
-                        <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         class="inline-flex items-center px-2 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-200 bg-red-100 dark:bg-red-900 hover:bg-red-200 dark:hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-700 rounded-lg border border-red-200 dark:border-red-700 flex-1 sm:flex-none justify-center">
+                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                         </svg>
                         Delete
                       </button>
                     {% endif %}
                     <a href="{% url 'article:article_detail' article.id %}" 
-                       class="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-600 rounded-lg border border-gray-200 dark:border-gray-600">
-                      <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="inline-flex items-center px-2 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-600 rounded-lg border border-gray-200 dark:border-gray-600 flex-1 sm:flex-none justify-center">
+                      <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                       </svg>
@@ -180,25 +182,25 @@
                 <div id="delete-modal-{{ article.id }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                     <div class="relative p-4 w-full max-w-md max-h-full">
                         <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow">
-                            <div class="p-4 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-700 rounded-lg bg-red-50 dark:bg-gray-800" role="alert">
+                            <div class="p-3 sm:p-4 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-700 rounded-lg bg-red-50 dark:bg-gray-800" role="alert">
                                 <div class="flex items-center">
                                     <svg class="shrink-0 w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                                     </svg>
                                     <span class="sr-only">Warning</span>
-                                    <h3 class="text-base sm:text-lg font-medium">Confirm Delete</h3>
+                                    <h3 class="text-sm sm:text-lg font-medium">Confirm Delete</h3>
                                 </div>
-                                <div class="mt-2 mb-4 text-sm">
+                                <div class="mt-2 mb-3 sm:mb-4 text-xs sm:text-sm">
                                     Are you sure you want to delete "<strong>{{ article.title }}</strong>"? This action cannot be undone.
                                 </div>
-                                <div class="flex">
-                                    <form method="POST" action="{% url 'article:delete_article' article.id %}" class="inline-block">
+                                <div class="flex gap-2">
+                                    <form method="POST" action="{% url 'article:delete_article' article.id %}" class="flex-1">
                                       {% csrf_token %}
-                                      <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-xs px-3 py-1.5 me-2 text-center inline-flex items-center">
+                                      <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-xs px-3 py-1.5 w-full text-center inline-flex items-center justify-center">
                                         Yes, Delete
                                       </button>
                                     </form>
-                                    <button type="button" class="text-red-800 dark:text-red-300 bg-transparent border border-red-800 dark:border-red-700 hover:bg-red-900 hover:text-white dark:hover:bg-red-700 dark:hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-xs px-3 py-1.5 text-center" data-modal-hide="delete-modal-{{ article.id }}">
+                                    <button type="button" class="text-red-800 dark:text-red-300 bg-transparent border border-red-800 dark:border-red-700 hover:bg-red-900 hover:text-white dark:hover:bg-red-700 dark:hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-xs px-3 py-1.5 text-center flex-1" data-modal-hide="delete-modal-{{ article.id }}">
                                         Cancel
                                     </button>
                                 </div>
@@ -211,11 +213,11 @@
           {% endfor %}
         </div>
       {% else %}
-        <div class="text-center py-8 sm:py-12">
-          <div class="text-gray-500 dark:text-gray-400 mb-2">No articles found</div>
+        <div class="text-center py-6 sm:py-12">
+          <div class="text-gray-500 dark:text-gray-400 mb-2 text-sm">No articles found</div>
           {% if user.get_role != "reviewer" %}
             <a href="{% url 'article:upload_article' %}" 
-               class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium">
+               class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs sm:text-sm font-medium">
               Upload your first article
             </a>
           {% endif %}
